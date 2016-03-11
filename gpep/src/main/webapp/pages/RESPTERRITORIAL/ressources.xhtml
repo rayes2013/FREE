@@ -1,0 +1,255 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Ressources</ui:define>
+	<ui:define name="description">Liste des Ressources</ui:define>
+	<ui:define name="body">
+			<h:form id="growl">
+				<p:messages id="growl" autoUpdate="true" showDetail="true" sticky="false" closable="true" />
+			</h:form>
+			<h:form id="AjoutButton">
+				<p:commandButton value="Ajout" icon="ui-icon-adds"
+					actionListener="#{ressourceBean.ajoutEvent(actionEvent)}"
+					update=":ajoutForm:ajoutPanel" oncomplete="PF('widgetAjout').show();PF('widgetEdit').close();PF('widgetConsult').close();"  />
+			</h:form>
+			<br />
+			<h:panelGrid columns="4" >
+			<h:form id="liste" >
+				<p:dataTable var="ressource"
+					value="#{ressourceBean.listRessources}" 
+					id="listeTab" widgetVar="Table" emptyMessage=" non trouvé"
+					paginator="true" rows="5" 
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="width:800px;text-align: center;margin-left: 1%;" >
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Choisir Type de Ressource" />
+							<h:selectOneMenu   id="globalFilter" onchange="PF('Table').filter()" >
+				            	<f:selectItem itemLabel="" itemValue="#{null}" />
+				             	<f:selectItems value="#{ressourceBean.listTypeRessources}" var="type" itemLabel="#{type.code}  #{type.designation}" itemValue="#{type}" converter="typeRessourceConverter" />
+				            </h:selectOneMenu>
+						</p:outputPanel>
+					</f:facet>
+					
+					<p:column headerText="Désignation" id="champ2"
+						filterBy="#{ressource.designation}" filterMatchMode="contains"
+					 style="width:4%" >
+						<h:outputText value="#{ressource.designation}"  />
+					</p:column>
+					<p:column headerText="Année" id="champ3" filterBy="#{ressource.annee}"
+						filterMatchMode="exact"  style="width:4%" >
+						 <f:facet name="filter">
+	               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+	                    		<f:selectItem  itemLabel="" itemValue="#{null}"/>
+					            <f:selectItems value="#{ressourceBean.listAnnees}" var="annee" itemLabel="#{annee}" itemValue="#{annee}" />
+	                		</h:selectOneMenu>
+            			</f:facet>
+						<h:outputText value="#{ressource.annee}" />
+					</p:column>
+					<p:column headerText="Région" id="champ5"
+						filterBy="#{ressource.region}" filterMatchMode="contains"
+					 style="width:4%" >
+						<h:outputText value="#{ressource.region}" />
+					</p:column>
+					<p:column headerText="Structure" id="champ6"
+						filterBy="#{ressource.structure}" filterMatchMode="exact"
+					 style="width:4%" >
+					 	<f:facet name="filter">
+	               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+	                    		<f:selectItem  itemLabel="" itemValue="#{null}"/>
+				            	<f:selectItems value="#{ressourceBean.listStructures}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+	                		</h:selectOneMenu>
+            			</f:facet>
+						<h:outputText value=" #{ressource.structure.designation}" />
+					</p:column>
+					<p:column headerText="Gouvernerat" id="champ7"
+						filterBy="#{ressource.gouvernerat}" filterMatchMode="exact"
+					 style="width:4%" >
+					 	<f:facet name="filter">
+	               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+	                    		<f:selectItem  itemLabel="" itemValue="#{null}"/>
+				            	<f:selectItems value="#{ressourceBean.listGouvernerats}" var="gouv" itemLabel="#{gouv.designation}" itemValue="#{gouv}" />
+	                		</h:selectOneMenu>
+            			</f:facet>
+						<h:outputText value=" #{ressource.gouvernerat.designation}" />
+					</p:column>
+					<p:column headerText="Type Ressource associé" id="champ8"
+						filterBy="#{ressource.typeRessource}" filterMatchMode="exact"
+					 style="width:4%" >
+						<h:outputText value="#{ressource.typeRessource.code} #{ressource.typeRessource.designation}" />
+					</p:column>
+					<p:column style="width:2%">
+						<p:commandButton id="Select" update=":consultForm:consultPanel"
+							icon="ui-icon-newwin" oncomplete="PF('widgetConsult').show();PF('widgetAjout').close();PF('widgetEdit').close();"
+							actionListener="#{ressourceBean.onRowSelect(ressource.id)}"
+							title="Sélectionner" />
+					</p:column>
+					<p:column style="width:2%">
+						<p:commandButton id="Editer" update=":formEdit:editPanel"
+							icon="ui-icon-arrowrefresh-1-w" oncomplete="PF('widgetAjout').close();PF('widgetConsult').close();PF('widgetEdit').show();"
+							actionListener="#{ressourceBean.editEvent(ressource.id)}"
+							title="#{msgs.modifier}" />
+					</p:column>
+					<p:column style="width:2%">
+						<p:commandButton id="Supprimer"
+							update=":liste:listeTab,:formEdit:editPanel" icon="ui-icon-trash"
+							action="#{ressourceBean.delete(ressource) }"
+							title="#{msgs.supprimer}"   oncomplete="PF('widgetAjout').close();PF('widgetEdit').close;PF('widgetConsult').close();">
+							<p:confirm header="Confirmation" message="Etes vous sure de supprimer l'enregistrement?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="Oui" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						ajax="false" update="true" />
+					<p:commandButton value="Non" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</h:form>
+
+			<h:form id="ajoutForm" >
+				<p:panel visible="false" header="Ajout" closable="true" widgetVar="widgetAjout" resizable="false"  closeSpeed="0" toggleSpeed="5"
+					id="ajout" style="margin-left:7%;">
+
+					
+					<h:panelGrid id="ajoutPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText  value="#{ressourceBean.ressource.designation}" id="champ2"  />
+						<h:outputLabel for="champ3" title="Année" value="Année" style="color: crimson;" />
+						<h:selectOneMenu id="champ3"  value="#{ressourceBean.ressource.annee}" >
+							<f:selectItem  itemLabel="" itemValue="#{null}"/>
+				            <f:selectItems value="#{ressourceBean.listAnnees}" var="annee" itemLabel="#{annee}" itemValue="#{annee}" />
+				        </h:selectOneMenu>
+						<h:outputLabel for="champ4" title="Région" value="Région" style="color: crimson;" />
+						<h:inputText   value="#{ressourceBean.ressource.region}" id="champ4"  />
+						<h:outputLabel for="champ6" title="Type" value="Type Ressource(*)" style="color: crimson;" />
+						<h:selectOneMenu  id="champ6" value="#{ressourceBean.ressource.typeRessource}" converter="typeRessourceConverter" >
+				            <f:selectItem itemLabel="" itemValue="#{null}" />
+				            <f:selectItems value="#{ressourceBean.listTypeRessources}" var="type" itemLabel="#{type.code}  #{type.designation}" itemValue="#{type}" />
+				        	 <f:ajax listener="#{ressourceBean.onchangeType}" render="listeTab2"  />
+				        </h:selectOneMenu>
+						<h:outputLabel for="champ5" title="Structure" value="Structure(*)" style="color: crimson;"  />
+						<h:selectOneMenu id="champ5"  value="#{ressourceBean.ressource.structure}" converter="structureConverter">
+				            <f:selectItems value="#{ressourceBean.listStructures}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+				        </h:selectOneMenu>
+				        <h:outputLabel for="champ7" title="Gouvernerat" value="Gouvernerat(*)" style="color: crimson;"  />
+				        <h:selectOneMenu id="champ7"  value="#{ressourceBean.ressource.gouvernerat}" converter="gouverneratConverter">
+				            <f:selectItems value="#{ressourceBean.listGouvernerats}" var="gouv" itemLabel="#{gouv.designation}" itemValue="#{gouv}" />
+				        </h:selectOneMenu>
+					</h:panelGrid>
+				   		<h2>Caractérestiques statiques</h2>	 
+						<h:panelGrid columns="3">
+							<p:dataTable var="caracterestique"
+								value="#{ressourceBean.listCaracterestiquesStatiques}"
+								id="listeTab2" widgetVar="Table2" emptyMessage="Aucune caractérestique"
+								style="width:470px;text-align: center;margin-left: 1%;">
+								<p:column headerText="Code" id="champ2" style="width:2%" >
+									<h:outputText value="#{caracterestique.code}" />
+								</p:column>
+								<p:column headerText="Désignation" id="champ3" style="width:2%" >
+									<h:outputText value="#{caracterestique.designation}"  />
+								</p:column>
+								<p:column headerText="Type" id="champ5" style="width:4%" >
+								<h:outputText value="Numérique"  rendered="#{caracterestique.type==0}"/>
+								<h:outputText value="Alpha Numérique" rendered="#{caracterestique.type==1}"/>
+								</p:column>
+								<p:column headerText="Valeur" id="champ6" style="width:4%" >
+								<h:inputText disabled="#{!caracterestique.saisie}" value="#{caracterestique.newValeur}" onkeyup="if(#{caracterestique.type==0}){nombre(this);}" />
+								</p:column>
+							</p:dataTable>
+				        </h:panelGrid>
+					<p:separator />
+					<p:commandButton value="enregistrer"
+						update="@all"
+						actionListener="#{ressourceBean.insert(actionEvent) }"
+						 oncomplete="PF('widgetAjout').show();PF('widgetEdit').close();PF('widgetConsult').close();"  />
+				</p:panel>
+
+			</h:form>
+
+			<h:form id="formEdit" >
+				<p:panel visible="false" header="Modification" widgetVar="widgetEdit"  closeSpeed="0" toggleSpeed="5"
+					resizable="false" id="edit" closable="true" style="margin-left:7%;">
+					<h:panelGrid id="editPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText  value="#{ressourceBean.ressource.designation}" id="champ2"  />
+						<h:outputLabel for="champ3" title="Année" value="Année" style="color: crimson;" />
+						<h:selectOneMenu id="champ3"  value="#{ressourceBean.ressource.annee}" >
+							<f:selectItem  itemLabel="" itemValue="#{null}"/>
+				            <f:selectItems value="#{ressourceBean.listAnnees}" var="annee" itemLabel="#{annee}" itemValue="#{annee}" />
+				        </h:selectOneMenu>
+						<h:outputLabel for="champ4" title="Région" value="Région" style="color: crimson;" />
+						<h:inputText   value="#{ressourceBean.ressource.region}" id="champ4"  />
+						<h:outputLabel for="champ6" title="Type" value="Type Ressource(*)" style="color: crimson;" />
+						<h:selectOneMenu id="champ6" value="#{ressourceBean.ressource.typeRessource}"  converter="typeRessourceConverter" disabled="true">
+				            <f:selectItems value="#{ressourceBean.listTypeRessources}" var="type" itemLabel="#{type.code}  #{type.designation}" itemValue="#{type}" />
+				        </h:selectOneMenu>
+						<h:outputLabel for="champ5" title="Structure" value="Structure(*)" style="color: crimson;" />
+						<h:selectOneMenu id="champ5"  value="#{ressourceBean.ressource.structure}"  converter="structureConverter">
+				            <f:selectItems value="#{ressourceBean.listStructures}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+				        </h:selectOneMenu>
+						<h:outputLabel for="champ7" title="Gouvernerat" value="Gouvernerat(*)" style="color: crimson;"  />
+				        <h:selectOneMenu id="champ7"  value="#{ressourceBean.ressource.gouvernerat}" converter="gouverneratConverter">
+				            <f:selectItems value="#{ressourceBean.listGouvernerats}" var="gouv" itemLabel="#{gouv.designation}" itemValue="#{gouv}" />
+				        </h:selectOneMenu>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Enregistrer" oncomplete="PF('widgetAjout').close();PF('widgetEdit').show();PF('widgetConsult').close();"
+						update="@all"
+						actionListener="#{ressourceBean.update(actionEvent) }"
+						 ajax="true"/>
+				</p:panel>
+
+			</h:form>
+			
+			<h:form id="consultForm" >
+				<p:panel visible="false" header="Consultation" widgetVar="widgetConsult"  closeSpeed="0" toggleSpeed="5"
+					resizable="false" id="consult" closable="true" style="margin-left:7%;">
+					<h:panelGrid id="consultPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Désignation" style="color: crimson;" />
+						<h:outputText  value="#{ressourceBean.ressource.designation}" id="champ2"  />
+						<h:outputLabel for="champ3" title="Année" value="Année" style="color: crimson;" />
+						<h:outputText  value="#{ressourceBean.ressource.annee}" id="champ3"  />
+						<h:outputLabel for="champ4" title="Région" value="Région" style="color: crimson;" />
+						<h:outputText   value="#{ressourceBean.ressource.region}" id="champ4"  />
+						<h:outputLabel for="champ5" title="Type" value="Type Ressource" style="color: crimson;" />
+						<h:outputText  value="#{ressourceBean.ressource.typeRessource.code}-#{ressourceBean.ressource.typeRessource.designation}" id="champ5"  />
+						<h:outputLabel for="champ6" title="Structure" value="Structure" style="color: crimson;" />
+						<h:outputText  value="#{ressourceBean.ressource.structure.designation}" id="champ6"  />
+						<h:outputLabel for="champ7" title="Gouvernerat" value="Gouvernerat" style="color: crimson;" />
+						<h:outputText  value="#{ressourceBean.ressource.gouvernerat.designation}" id="champ7"  />
+					</h:panelGrid>
+				</p:panel>
+
+			</h:form>
+			
+		</h:panelGrid>
+		
+	<script type="text/javascript">
+		function nombre(champ,event)
+	    {
+		   // var source = document.getElementById(id); //On récupère la balise
+		    var value = champ.value; //ici, sa valeur
+		    if (isNaN(parseFloat(value))) //cas où la valeur n'est pas du tout un nombre
+			// Dans ce cas, parseFloat(value) est égal à NaN
+	        {
+	        	champ.value = ""; // la valeur devient nulle
+	        }
+	   		else if (value != parseInt(value) + ".") // Cas ou ce n'est pas un nombre avec juste un point derrière (pour la virgule)
+	        {
+	   			champ.value = parseFloat(value); // La valeur devient la partie nombre
+	        }
+	    }
+		</script> 	
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,170 @@
+package com.tn.sonede.dao;
+
+import static org.hibernate.criterion.Example.create;
+
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
+
+import com.tn.sonede.persistance.ValeurCaracterestique;
+
+@Repository("valeurCaracterestiqueHome")
+@Scope("singleton")
+public class ValeurCaracterestiqueHomeImp implements ValeurCaracterestiqueHome{
+
+	private static final Log log = LogFactory.getLog(ValeurCaracterestiqueHomeImp.class);
+
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+
+	public void persist(ValeurCaracterestique transientInstance) {
+		log.debug("persisting ValeurCaracterestique instance");
+		try {
+			sessionFactory.getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(ValeurCaracterestique instance) {
+		log.debug("attaching dirty ValeurCaracterestique instance");
+		try {
+			sessionFactory.getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(ValeurCaracterestique instance) {
+		log.debug("attaching clean ValeurCaracterestique instance");
+		try {
+			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(ValeurCaracterestique persistentInstance) {
+		log.debug("deleting ValeurCaracterestique instance");
+		try {
+			sessionFactory.getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public ValeurCaracterestique merge(ValeurCaracterestique detachedInstance) {
+		log.debug("merging ValeurCaracterestique instance");
+		try {
+			ValeurCaracterestique result = (ValeurCaracterestique) sessionFactory.getCurrentSession().merge(
+					detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public ValeurCaracterestique findById(Integer id) {
+		log.debug("getting ValeurCaracterestique instance with id: " + id);
+		try {
+			ValeurCaracterestique instance = (ValeurCaracterestique) sessionFactory.getCurrentSession().get(
+					ValeurCaracterestique.class, id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	
+	public ValeurCaracterestique findByIdWithJoins(Integer id) {
+		log.debug("getting ValeurCaracterestique instance with id: " + id);
+		try {
+			Criteria crit = sessionFactory.getCurrentSession()
+					.createCriteria(ValeurCaracterestique.class).add(Restrictions.eq("id", id))
+					.setFetchMode("formule", FetchMode.JOIN)
+					.setFetchMode("caracterestiques", FetchMode.JOIN);
+			return (ValeurCaracterestique) crit.uniqueResult();
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<ValeurCaracterestique> findByExample(ValeurCaracterestique instance) {
+		log.debug("finding ValeurCaracterestique instance by example");
+		try {
+			List<ValeurCaracterestique> results = (List<ValeurCaracterestique>) sessionFactory
+					.getCurrentSession()
+					.createCriteria(ValeurCaracterestique.class)
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public List<ValeurCaracterestique> findAll() {
+		Criteria crit = sessionFactory.getCurrentSession().createCriteria(
+				ValeurCaracterestique.class);
+		return (List<ValeurCaracterestique>)crit.list();
+	}
+
+	public List<ValeurCaracterestique> findAllWithJoins() {
+		Criteria crit = sessionFactory.getCurrentSession().createCriteria(
+				ValeurCaracterestique.class);
+		return (List<ValeurCaracterestique>) crit.list();
+	}
+
+	public List<ValeurCaracterestique> findAllWithJoins(String param) {
+		Criteria crit = sessionFactory.getCurrentSession()
+				.createCriteria(ValeurCaracterestique.class)
+				.setFetchMode(param, FetchMode.JOIN);
+		return (List<ValeurCaracterestique>) crit.list();
+	}
+	
+	public long nbreLignesWithParam(String attribut, Object value) {
+		Long nb= (Long)sessionFactory.getCurrentSession()
+					.createQuery("Select count(*) " +
+							" from ValeurCaracterestique  " +
+							" where "+attribut+"=?")
+							.setString(0, (String) value)
+							.uniqueResult();
+			return nb;
+	}
+}

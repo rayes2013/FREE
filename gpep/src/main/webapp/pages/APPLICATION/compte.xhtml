@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">#{msgs.compte}</ui:define>
+	<ui:define name="description"> #{msgs.compte}</ui:define>
+	<ui:define name="body">
+	<h:form>
+		
+		</h:form>
+		<h:panelGrid style="margin:0 auto;margin-left: 10% ;margin-top: 1%">
+			<p:panel >
+			
+					<f:facet name="header">
+							<h:outputText value="Information Compte" />
+						</f:facet>
+					
+					<h:panelGrid columns="2" cellpadding="4">
+
+
+						<h:outputLabel  for="champ1" title="matricule" value="matricule" style="color: crimson;" />
+                    	<h:outputText  value="#{connecteBean.utilisateur.agent.matricule}"   />
+                   
+						
+                
+                   	 	<h:outputLabel for="champ2"  value="Nom" style="color: crimson;"/>
+                   		 <h:outputText   value="#{connecteBean.utilisateur.agent.nom}"  id="champ2"  />
+                   		 
+                   		 <h:outputLabel for="champ3"  value="Prénom" style="color: crimson;"/>
+                   		 <h:outputText   value="#{connecteBean.utilisateur.agent.prenom}"  id="champ3"  />
+                   		 
+                   		 <h:outputLabel for="champ3"  value="Login" style="color: crimson;"/>
+                   		 <h:outputText   value="#{connecteBean.utilisateur.login}"  id="champ4"  />
+                    
+                    
+                   	
+					</h:panelGrid>	
+					</p:panel>	
+						
+					
+				
+
+			
+			
+				
+			
+		</h:panelGrid>
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Menu</ui:define>
+	<ui:define name="description">Menu</ui:define>
+	<ui:define name="body">
+			<h:form>
+			<h3>Administration du site</h3>
+			<p:separator></p:separator>
+			<h:panelGrid columns="4" cellpadding="20" cellspacing="10">
+				<p:link href="/pages/ADMIN/agent.jsf">Paramétrage des agents</p:link>
+				<p:link href="/pages/ADMIN/utilisateur.jsf">Paramétrage des utilisateurs</p:link>
+				<p:link href="/pages/ADMIN/groupe.jsf">Consultation des groupes</p:link>
+			</h:panelGrid>
+			<br/>
+			<h3>Paramétrage</h3>
+			<p:separator></p:separator>
+			<h:panelGrid columns="4" cellpadding="20" cellspacing="10">
+				<p:link href="/pages/ADMIN/produitchimique.jsf">Paramétrage des produits chimiques</p:link>
+				<p:link href="/pages/ADMIN/gouvernerat.jsf">Paramétrage des gouvernerats</p:link>
+				<p:link href="/pages/ADMIN/structure.jsf">Paramétrage des structures</p:link>
+			</h:panelGrid>
+			</h:form>
+	</ui:define>
+
+</ui:composition>
+</html>

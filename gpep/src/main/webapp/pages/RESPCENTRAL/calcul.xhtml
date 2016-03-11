@@ -1,0 +1,156 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Formule</ui:define>
+	<ui:define name="description">Evaluation du calcul des formules</ui:define>
+	<ui:define name="body">
+			<h:form id="growl">
+				<p:messages id="growl" autoUpdate="true" showDetail="true" sticky="false" closable="true" />
+			</h:form>
+			<br />
+			<h:panelGrid columns="4" >
+			<h:form id="liste" >
+				<p:dataTable var="ressource"
+					value="#{calculBean.listRessources}" 
+					id="listeTab" widgetVar="Table" emptyMessage=" non trouvé"
+					paginator="true" rows="5" 
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="width:800px;text-align: center;margin-left: 1%;" >
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Choisir Type de Ressource" />
+							<h:selectOneMenu   id="globalFilter" onchange="PF('Table').filter()" >
+				            	<f:selectItem itemLabel="" itemValue="#{null}" />
+				             	<f:selectItems value="#{calculBean.listTypeRessources}" var="type" itemLabel="#{type.code}  #{type.designation}" itemValue="#{type}" converter="typeRessourceConverter" />
+				            </h:selectOneMenu>
+						</p:outputPanel>
+					</f:facet>
+					
+					<p:column headerText="Désignation" id="champ2"
+						filterBy="#{ressource.designation}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{ressource.designation}"  />
+					</p:column>
+					<p:column headerText="Année" id="champ3" filterBy="#{ressource.annee}"
+						filterMatchMode="exact"  style="width:2%" >
+						 <f:facet name="filter">
+	               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+	                    		<f:selectItem  itemLabel="" itemValue="#{null}"/>
+					            <f:selectItems value="#{consommationBean.listAnnees}" var="annee" itemLabel="#{annee}" itemValue="#{annee}" />
+	                		</h:selectOneMenu>
+            			</f:facet>
+						<h:outputText value="#{ressource.annee}" />
+					</p:column>
+					<p:column headerText="Région" id="champ5"
+						filterBy="#{ressource.region}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{ressource.region}" />
+					</p:column>
+					<p:column headerText="Structure" id="champ6"
+						filterBy="#{ressource.structure}" filterMatchMode="exact"
+					 style="width:2%" >
+					 	<f:facet name="filter">
+	               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+	                    		<f:selectItem  itemLabel="" itemValue="#{null}"/>
+				            	<f:selectItems value="#{consommationBean.listStructures}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+	                		</h:selectOneMenu>
+            			</f:facet>
+						<h:outputText value=" #{ressource.structure.designation}" />
+					</p:column>
+					<p:column headerText="Type Ressource associé" id="champ8"
+						filterBy="#{ressource.typeRessource}" filterMatchMode="exact"
+					 style="width:2%" >
+						<h:outputText value="#{ressource.typeRessource.code} #{ressource.typeRessource.designation}" />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Select" update="@all"
+							icon="ui-icon-newwin" oncomplete="PF('widgetConsult').show();"
+							actionListener="#{calculBean.onRowSelect(ressource.id)}"
+							title="Sélectionner" />
+					</p:column>
+				</p:dataTable>
+				
+			</h:form>
+
+			<h:form id="consultForm" >
+				<p:panel visible="false" header="Consultation" closable="true" widgetVar="widgetConsult" resizable="false" closeSpeed="0" toggleSpeed="5"
+						id="consult"  style="margin-left:7%;">
+						<h:panelGrid id="consultPanel" columns="2" cellpadding="4" width="400px">
+						<h:outputLabel for="champ2" value="Désignation" style="color: crimson;" />
+						<h:outputText  value="#{calculBean.ressource.designation}" id="champ2"  />
+						<h:outputLabel for="champ3" title="Année" value="Année" style="color: crimson;" />
+						<h:outputText  value="#{calculBean.ressource.annee}" id="champ3"  />
+						<h:outputLabel for="champ4" title="Région" value="Région" style="color: crimson;" />
+						<h:outputText   value="#{calculBean.ressource.region}" id="champ4"  />
+						<h:outputLabel for="champ5" title="Structure" value="Structure" style="color: crimson;" />
+						<h:outputText   value="#{calculBean.ressource.structure.designation}" id="champ5"  />
+						<h:outputLabel for="champ6" title="Type" value="Type Ressource" style="color: crimson;" />
+						<h:outputText   value="#{calculBean.ressource.typeRessource.designation}" id="champ6"  />
+						</h:panelGrid>
+					</p:panel>
+				</h:form>
+			
+		</h:panelGrid>
+		<br/><br/>
+		<p:tabView id="tabview">
+	    	<p:tab title="Formule" >
+	   		 <h:form id="liste3" >
+				<p:dataTable var="formule"
+					value="#{calculBean.listFormules}" 
+					id="listeTab3" widgetVar="Table3" emptyMessage=" non trouvé"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="width:800px;text-align: center;margin-left: 1%;">
+					<f:facet name="header" >
+						<p:outputPanel>
+							<h:outputText value="Rechercher" />
+							<p:inputText id="globalFilter" onkeyup="PF('Table3').filter()" style="width:20%" />
+						</p:outputPanel>
+					</f:facet>
+					<p:column headerText="Code" id="champ2" filterBy="#{formule.code}"
+						filterMatchMode="contains"  style="width:2%" >
+						<h:outputText value="#{formule.code}" />
+					</p:column>
+					<p:column headerText="Désignation" id="champ3"
+						filterBy="#{formule.designation}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{formule.designation}"  />
+					</p:column>
+					<p:column headerText="Type du rapport" id="champ4" filterBy="#{formule.type}" filterMatchMode="exact" style="width:2%" >
+					 <f:facet name="filter">
+               			 <h:selectOneMenu onchange="PF('Table3').filter()" >
+                    		<f:selectItem itemLabel="" itemValue="#{null}" />
+				            <f:selectItem itemLabel="Journalière" itemValue="#{1}" />
+				            <f:selectItem itemLabel="Mensuelle" itemValue="#{2}" />
+                		</h:selectOneMenu>
+            		</f:facet>
+					<h:outputText value="Journalière" rendered="#{formule.type==1}"/>
+					<h:outputText value="Mensuelle"  rendered="#{formule.type==2}"/>
+					</p:column>
+					<p:column headerText="Expression" id="champ5"
+						filterBy="#{formule.expression}" filterMatchMode="contains"
+					 style="width:3%;" >
+					 	<h:outputText value="#{formule.expression}"  />
+					</p:column>
+					<p:column headerText="Evaluation" id="champ6"
+						filterBy="#{formule.resultat}"  style="width:3%;" >
+					 	<h:outputText value="#{formule.resultat}"  />
+					</p:column>
+					<p:column  id="champ7"  style="width:3%;" >
+						<h:outputText value="Formule valide" style="color: green;" rendered="#{formule.OK==true}"/>
+						<h:outputText value="Formule non valide(Erreur de données ou de la formule)" style="color: red;" rendered="#{formule.OK==false}"/>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+	        </p:tab>
+	    </p:tabView>
+	</ui:define>
+</ui:composition>
+</html>

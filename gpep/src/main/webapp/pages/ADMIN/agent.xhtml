@@ -1,0 +1,167 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Agents</ui:define>
+	<ui:define name="description">Liste des agents</ui:define>
+	<ui:define name="body">
+			<h:form id="growl">
+				<p:messages id="growl" autoUpdate="true" showDetail="true" sticky="false" closable="true" />
+			</h:form>
+	
+			<h:form id="AjoutButton2">
+				<p:commandButton value="Ajout" icon="ui-icon-adds" update=":ajoutForm:ajoutPanel"
+					actionListener="#{agentBean.ajoutEvent(actionEvent)}"
+					oncomplete="PF('widgetEdit').close();PF('widgetAjout').show();PF('widgetConsult').close();" />
+			</h:form>
+			<br />
+			<h:panelGrid columns="4">
+			<h:form id="liste">
+				<p:dataTable var="agent"
+					value="#{agentBean.listAgents}"
+					id="listeTab" widgetVar="Table" emptyMessage="non trouvé"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="font-size:13px;width:700px;text-align: center;margin-left: 1%;">
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Rechercher" />
+							<p:inputText id="globalFilter" onkeyup="PF('Table').filter()"
+								style="width:20%" />
+						</p:outputPanel>
+					</f:facet>
+
+					<p:column headerText="Matricule" id="champ2" filterBy="#{agent.matricule}"
+						filterMatchMode="contains"  style="width:2%" >
+						<h:outputText value="#{agent.matricule}" />
+					</p:column>
+					<p:column headerText="Nom" id="champ3"
+						filterBy="#{agent.nom}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{agent.nom}"  />
+					</p:column>
+					<p:column headerText="Prénom" id="champ4"
+						filterBy="#{agent.prenom}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{agent.prenom}"  />
+					</p:column>
+					<p:column headerText="Structure" id="champ5"
+						filterBy="#{agent.structure}" filterMatchMode="exact"
+					 style="width:2%" >
+					 	<f:facet name="filter">
+	               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+	                    		<f:selectItem  itemLabel="" itemValue="#{null}"/>
+				            	<f:selectItems value="#{consommationBean.listStructures}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+	                		</h:selectOneMenu>
+            			</f:facet>
+						<h:outputText value="#{agent.structure.designation}"  />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Select" update=":consultForm:consultPanel"
+							icon="ui-icon-newwin" oncomplete="PF('widgetConsult').show();PF('widgetAjout').close();PF('widgetEdit').close();"
+							actionListener="#{agentBean.onRowSelect(agent.matricule)}"
+							title="Sélectionner" />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Editer" 
+							icon="ui-icon-arrowrefresh-1-w" oncomplete="PF('widgetAjout').close();PF('widgetEdit').show();PF('widgetConsult').close();"
+							actionListener="#{agentBean.editEvent(agent.matricule)}"
+							title="#{msgs.modifier}" update=":formEdit:editPanel"/>
+					</p:column>
+					<p:column style="width:1%">
+					
+						<p:commandButton id="Supprimer"
+							update=":liste:listeTab" icon="ui-icon-trash"
+							action="#{agentBean.delete(agent) }"
+							title="#{msgs.supprimer}"  >
+							<p:confirm header="Confirmation" message="Etes vous sure de supprimer l'enregistrement?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="Oui" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						ajax="false" update="true" />
+					<p:commandButton value="Non" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</h:form>
+
+			<h:form id="ajoutForm">
+
+				<p:panel visible="false" header="Ajout" closable="true" widgetVar="widgetAjout" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="ajout" style="margin-left: 7%;">
+
+					<h:panelGrid id="ajoutPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Matricule(*)" style="color: crimson;" />
+						<h:inputText   value="#{agentBean.agent.matricule}" id="champ2"  />
+						<h:outputLabel for="champ3" title="nom" value="Nom(*)" style="color: crimson;" />
+						<h:inputText   value="#{agentBean.agent.nom}" id="champ3"  />
+						<h:outputLabel for="champ4" title="prénom" value="Prénom(*)" style="color: crimson;" />
+						<h:inputText   value="#{agentBean.agent.prenom}" id="champ4"  />
+						<h:outputLabel for="champ5" title="Structure" value="Structure" style="color: crimson;" />
+				        <h:selectOneMenu id="champ5"  value="#{agentBean.agent.structure}" converter="structureConverter">
+				            <f:selectItems value="#{agentBean.listStructures}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+				        </h:selectOneMenu>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="enregistrer"
+						update="@all"
+						actionListener="#{agentBean.insert(actionEvent) }"
+						oncomplete="PF('widgetEdit').close();PF('widgetAjout').show();PF('widgetConsult').close();" />
+				</p:panel>
+
+			</h:form>
+
+			<h:form id="formEdit">
+				<p:panel visible="false" header="Modification" widgetVar="widgetEdit" closeSpeed="0" toggleSpeed="5"
+					resizable="false" id="edit" closable="true"
+					style="margin-left: 7%;">
+					<h:panelGrid id="editPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Matricule" style="color: crimson;" />
+						<h:outputText value="#{agentBean.agent.matricule}" id="champ2"  />
+						<h:outputLabel for="champ3" title="nom" value="Nom(*)" style="color: crimson;" />
+						<h:inputText requiredMessage="La désignation est obligatoire" 
+							value="#{agentBean.agent.nom}"
+							id="champ3"  />
+						<h:outputLabel for="champ4" title="prénom" value="Prénom(*)" style="color: crimson;" />
+						<h:inputText   value="#{agentBean.agent.prenom}" id="champ4"  />
+						<h:outputLabel for="champ5" title="Structure " value="Structure " style="color: crimson;" />
+				        <h:selectOneMenu id="champ5"  value="#{agentBean.agent.structure}" converter="structureConverter">
+				            <f:selectItems value="#{agentBean.listStructures}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+				        </h:selectOneMenu>	
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Enregistrer"
+						update="@all" oncomplete="PF('widgetEdit').show();PF('widgetAjout').close();PF('widgetConsult').close();"
+						actionListener="#{agentBean.update(actionEvent) }"/>
+				</p:panel>
+			</h:form>
+			<h:form id="consultForm" >
+				<p:panel visible="false" header="Consultation" closable="true" widgetVar="widgetConsult" resizable="false" closeSpeed="0" toggleSpeed="5"
+						id="ajout"  style="margin-left:7%;">
+	
+						<h:panelGrid id="consultPanel" columns="2" cellpadding="4" width="400px">
+							<h:outputLabel for="champ2" value="Matricule" style="color: crimson;" />
+							<h:outputText  value="#{agentBean.agent.matricule}" id="champ2"  />
+							<h:outputLabel for="champ3" title="Nom" value="Nom" style="color: crimson;" />
+							<h:outputText   value="#{agentBean.agent.nom}" id="champ3"  />
+							<h:outputLabel for="champ4" title="Prénom" value="Prénom" style="color: crimson;" />
+							<h:outputText   value="#{agentBean.agent.prenom}" id="champ4"  />
+							<h:outputLabel for="champ5" title="structure" value="Structure" style="color: crimson;" />
+							<h:outputText   value="#{agentBean.agent.structure.designation}" id="champ5"  />
+						</h:panelGrid>
+					</p:panel>
+				</h:form>
+	 	</h:panelGrid>
+	</ui:define>
+</ui:composition>
+</html>

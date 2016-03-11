@@ -1,0 +1,285 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Consommation des produits chimiques</ui:define>
+	<ui:define name="description">Consommation des produits chimiques</ui:define>
+	<ui:define name="body">
+			<h:form id="growl">
+				<p:messages id="growl" autoUpdate="true" showDetail="true" sticky="false" closable="true" />
+			</h:form>
+			<h:panelGrid columns="4" >
+			<h:form id="liste" >
+				<p:dataTable var="ressource"
+					value="#{consommationBean.listRessources}" 
+					id="listeTab" widgetVar="Table" emptyMessage=" non trouvé"
+					paginator="true" rows="5" 
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="width:800px;text-align: center;margin-left: 1%;" >
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Choisir Type de Ressource" />
+							<h:selectOneMenu   id="globalFilter" onchange="PF('Table').filter()" >
+				            	<f:selectItem itemLabel="" itemValue="#{null}" />
+				             	<f:selectItems value="#{consommationBean.listTypeRessources}" var="type" itemLabel="#{type.code}  #{type.designation}" itemValue="#{type}" converter="typeRessourceConverter" />
+				            </h:selectOneMenu>
+						</p:outputPanel>
+					</f:facet>
+					<p:column headerText="Désignation" id="champ2"
+						filterBy="#{ressource.designation}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{ressource.designation}"  />
+					</p:column>
+					<p:column headerText="Année" id="champ3" filterBy="#{ressource.annee}"
+						filterMatchMode="exact"  style="width:2%" >
+						 <f:facet name="filter">
+	               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+	                    		<f:selectItem  itemLabel="" itemValue="#{null}"/>
+					            <f:selectItems value="#{consommationBean.listAnnees}" var="annee" itemLabel="#{annee}" itemValue="#{annee}" />
+	                		</h:selectOneMenu>
+            			</f:facet>
+						<h:outputText value="#{ressource.annee}" />
+					</p:column>
+					<p:column headerText="Région" id="champ5"
+						filterBy="#{ressource.region}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{ressource.region}" />
+					</p:column>
+					<p:column headerText="Structure" id="champ6"
+						filterBy="#{ressource.structure}" filterMatchMode="exact"
+					 style="width:2%" >
+					 	<f:facet name="filter">
+	               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+	                    		<f:selectItem  itemLabel="" itemValue="#{null}"/>
+				            	<f:selectItems value="#{consommationBean.listStructures}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+	                		</h:selectOneMenu>
+            			</f:facet>
+						<h:outputText value=" #{ressource.structure.designation}" />
+					</p:column>
+					<p:column headerText="Type Ressource associé" id="champ8"
+						filterBy="#{ressource.typeRessource}" filterMatchMode="exact"
+					 style="width:2%" >
+						<h:outputText value="#{ressource.typeRessource.code} #{ressource.typeRessource.designation}" />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Select" update=":consultForm:consultPanel,:tabview:liste2:listeTab2,:tabview"
+							icon="ui-icon-newwin" oncomplete="PF('widgetConsult').show();PF('widgetAjout2').close();PF('widgetConsult2').close();PF('widgetEdit2').close();"
+							actionListener="#{consommationBean.onRowSelect(ressource.id)}"
+							title="Sélectionner" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+
+			<h:form id="consultForm" >
+				<p:panel visible="false" header="Consultation" widgetVar="widgetConsult"  closeSpeed="0" toggleSpeed="5"
+					resizable="false" id="consult" closable="true" style="margin-left:7%;">
+					<h:panelGrid id="consultPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Désignation" style="color: crimson;" />
+						<h:outputText  value="#{consommationBean.ressource.designation}" id="champ2"  />
+						<h:outputLabel for="champ3" title="Année" value="Année" style="color: crimson;" />
+						<h:outputText  value="#{consommationBean.ressource.annee}" id="champ3"  />
+						<h:outputLabel for="champ4" title="Région" value="Région" style="color: crimson;" />
+						<h:outputText   value="#{consommationBean.ressource.region}" id="champ4"  />
+						<h:outputLabel for="champ5" title="Type" value="Type Ressource" style="color: crimson;" />
+						<h:outputText  value="#{consommationBean.ressource.typeRessource.code}-#{consommationBean.ressource.typeRessource.designation}" id="champ5"  />
+						<h:outputLabel for="champ6" title="Structure" value="Structure" style="color: crimson;" />
+						<h:outputText  value="#{consommationBean.ressource.structure.designation}" id="champ6"  />
+						<h:outputLabel for="champ7" title="Gouvernerat" value="Gouvernerat" style="color: crimson;" />
+						<h:outputText  value="#{consommationBean.ressource.gouvernerat.designation}" id="champ7"  />
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+		</h:panelGrid>
+		<br/><br/>
+		<p:tabView id="tabview" >
+	    	<p:tab title="Consommation">
+	        <h:form id="AjoutButton2">
+				<p:commandButton value="Ajout" icon="ui-icon-adds" update=":tabview:ajoutForm2:ajoutPanel2"
+					actionListener="#{consommationBean.ajoutConsommationEvent(actionEvent)}"
+					oncomplete="PF('widgetAjout2').show();PF('widgetEdit2').close();PF('widgeConsult2').close();" />
+			</h:form>
+			<br />
+			<h:panelGrid columns="3">
+			<h:form id="liste2">
+				<p:dataTable var="consommation"
+					value="#{consommationBean.listConsommations}"
+					id="listeTab2" widgetVar="Table2" emptyMessage="non trouvé"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="width:700px;text-align: center;margin-left: 1%;">
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Rechercher" />
+							<p:inputText id="globalFilter" onkeyup="PF('Table2').filter()"
+								style="width:20%" />
+						</p:outputPanel>
+					</f:facet>
+
+					<p:column headerText="Date Constatatation" id="champ2" filterBy="#{consommation.dtConst}"
+						filterMatchMode="contains"  style="width:2%" >
+						<h:outputText value="#{consommation.dtConst}" >
+							<f:convertDateTime timeZone="Europe/Paris" pattern="dd/MM/yyyy"  />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Produit chimique" id="champ3"
+						filterBy="#{consommation.produitChimique.designation}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{consommation.produitChimique.designation}"  />
+					</p:column>
+					<p:column headerText="Quantité" id="champ4"
+						filterBy="#{consommation.quantite}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{consommation.quantite}"  >
+							<f:convertNumber maxFractionDigits="3" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Prix" id="champ5"
+						filterBy="#{consommation.prix}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{consommation.prix}"  >
+							<f:convertNumber maxFractionDigits="3" />
+						</h:outputText>
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Editer" update=":tabview:formEdit2:editPanel2"
+							icon="ui-icon-arrowrefresh-1-w" oncomplete="PF('widgetAjout2').close();PF('widgetConsult2').close();PF('widgetEdit2').show();"
+							actionListener="#{consommationBean.editConsommationEvent(consommation.id)}"
+							title="#{msgs.modifier}" />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Supprimer"
+							update=":tabview:liste2:listeTab2,:tabview:ajoutForm2:ajoutPanel2" icon="ui-icon-trash"
+							action="#{consommationBean.deleteConsommation(consommation) }"
+							title="#{msgs.supprimer}"  >
+							<p:confirm header="Confirmation" message="Etes vous sure de supprimer l'enregistrement?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="Oui" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						ajax="false" update="true" />
+					<p:commandButton value="Non" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</h:form>
+
+			<h:form id="ajoutForm2">
+
+				<p:panel visible="false" header="Ajout" closable="true" widgetVar="widgetAjout2" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="ajout" style="margin-left: 7%;">
+
+					<h:panelGrid id="ajoutPanel2" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Produit chimique(*)" style="color: crimson;" />
+						 <h:selectOneMenu id="champ2"  value="#{consommationBean.consommation.produitChimique}" converter="produitChimiqueConverter">
+				            <f:selectItems value="#{consommationBean.listProduitChimiques}" var="pc" itemLabel="#{pc.designation}" itemValue="#{pc}" />
+				        </h:selectOneMenu>
+				        
+				        <h:outputLabel for="popup" value="Date Constatation(*)" style="color: crimson;" />
+				         <p:inputMask value="#{consommationBean.consommation.dtConst}" mask="99/99/9999" id="popup">
+                      		<f:convertDateTime timeZone="Europe/Paris" pattern="dd/MM/yyyy" />
+                     	 </p:inputMask> 
+				        <h:outputLabel for="champ3" value="Prix(*)" style="color: crimson;" />
+				        <h:inputText value="#{consommationBean.consommation.prix}" onkeyup="nombre(this);">
+				        	<f:convertNumber maxFractionDigits="3" />
+				        </h:inputText>
+				        <h:outputLabel for="champ4" value="Quantité(*)" style="color: crimson;" />
+				        <h:inputText value="#{consommationBean.consommation.quantite}" onkeyup="nombre(this);" >
+				        	<f:convertNumber maxFractionDigits="3" />
+				        </h:inputText>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="enregistrer"
+						update="@all" ajax="false"
+						actionListener="#{consommationBean.insertConsommation(actionEvent)}"
+						oncomplete="PF('widgetAjout2').show();PF('widgetEdit2').close();" />
+				</p:panel>
+
+			</h:form>
+			
+			<h:form id="formEdit2">
+
+				<p:panel visible="false" header="Modification" closable="true" widgetVar="widgetEdit2" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="edit" style="margin-left: 7%;">
+
+					<h:panelGrid id="editPanel2" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Produit chimique(*)" style="color: crimson;" />
+						 <h:selectOneMenu id="champ2"  value="#{consommationBean.consommation.produitChimique}" converter="produitChimiqueConverter">
+				            <f:selectItems value="#{consommationBean.listProduitChimiques}" var="pc" itemLabel="#{pc.designation}" itemValue="#{pc}" />
+				        </h:selectOneMenu>
+				        
+				        <h:outputLabel for="popup" value="Date Constatation(*)" style="color: crimson;" />
+				         <p:inputMask value="#{consommationBean.consommation.dtConst}" mask="99/99/9999" id="popup">
+                      		<f:convertDateTime timeZone="Europe/Paris" pattern="dd/MM/yyyy" />
+                     	 </p:inputMask> 
+				        <h:outputLabel for="champ3" value="Prix(*)" style="color: crimson;" />
+				        <h:inputText value="#{consommationBean.consommation.prix}" onkeyup="nombre(this);" >
+				        	<f:convertNumber maxFractionDigits="3" />
+				        </h:inputText>
+				        <h:outputLabel for="champ4" value="Quantité(*)" style="color: crimson;" />
+				        <h:inputText value="#{consommationBean.consommation.quantite}" onkeyup="nombre(this);" >
+				        	<f:convertNumber maxFractionDigits="3" />
+				        </h:inputText>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="enregistrer"
+						update="@all" 
+						actionListener="#{consommationBean.updateConsommation(actionEvent) }"
+						oncomplete="PF('widgetEdit2').show();PF('widgetAjout2').close();" />
+				</p:panel>
+
+			</h:form>
+			
+			<h:form id="consultForm2">
+
+				<p:panel visible="false" header="Consultation" closable="true" widgetVar="widgetConsult2" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="consult" style="margin-left: 7%;">
+
+					<h:panelGrid id="consultPanel2" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Produit chimique" style="color: crimson;" />
+						 <h:outputText id="champ2"  value="#{consommationBean.consommation.produitChimique.designation}"/>
+				        <h:outputLabel for="champ5" value="Date Constatation" style="color: crimson;" />
+				        <h:outputText value="#{consommationBean.consommation.dtConst}" >
+							<f:convertDateTime timeZone="Europe/Paris" pattern="dd/MM/yyyy"/>
+						</h:outputText>
+				        <h:outputLabel for="champ3" value="Prix" style="color: crimson;" />
+				        <h:outputText value="#{consommationBean.consommation.prix}" onkeyup="nombre(this);" />
+				        <h:outputLabel for="champ4" value="Quantité" style="color: crimson;" />
+				        <h:outputText value="#{consommationBean.consommation.quantite}" onkeyup="nombre(this);" />
+					</h:panelGrid>
+				</p:panel>
+
+			</h:form>
+
+	        </h:panelGrid>
+	        </p:tab>
+	        </p:tabView>
+	        
+	<script type="text/javascript">
+		function nombre(champ,event)
+	    {
+		   // var source = document.getElementById(id); //On récupère la balise
+		    var value = champ.value; //ici, sa valeur
+		    if (isNaN(parseFloat(value))) //cas où la valeur n'est pas du tout un nombre
+			// Dans ce cas, parseFloat(value) est égal à NaN
+	        {
+	        	champ.value = ""; // la valeur devient nulle
+	        }
+	   		else if (value != parseInt(value) + ".") // Cas ou ce n'est pas un nombre avec juste un point derrière (pour la virgule)
+	        {
+	   			champ.value = parseFloat(value); // La valeur devient la partie nombre
+	        }
+	    }
+		</script> 	
+	</ui:define>
+</ui:composition>
+</html>

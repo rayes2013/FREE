@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Menu</ui:define>
+	<ui:define name="description">Menu</ui:define>
+	<ui:define name="body">
+			<h:form>
+			
+			<h3>Données de production</h3>
+			<p:separator></p:separator>
+			<h:panelGrid columns="4" cellpadding="20" cellspacing="10">
+				<p:link href="/pages/RESPCENTRAL/valeursValide.jsf">Consultation des données de production</p:link>
+				<p:link href="/pages/RESPCENTRAL/calcul.jsf">Evaluation du calcul des formules</p:link>
+			</h:panelGrid>
+			<h3>Rapports</h3>
+			<p:separator></p:separator>
+			<h:panelGrid columns="4" cellpadding="20" cellspacing="10">
+				<p:link href="/pages/RESPCENTRAL/rapport.jsf">Génération des rapports</p:link>
+			</h:panelGrid>
+			</h:form>
+	</ui:define>
+
+</ui:composition>
+</html>

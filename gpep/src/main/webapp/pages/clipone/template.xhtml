@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags">
+<f:view >
+	<!--<![endif]-->
+	<!-- start: HEAD -->
+	<h:head>
+		<title><ui:insert name="title">GPEP </ui:insert></title>
+
+		<style type="text/css">
+			.ui-growl {
+				position: absolute;
+				top: 80px;
+				right: 20px;
+				width: 301px;
+				z-index: 9999;
+			}
+			
+			
+		</style>
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
+		<!-- start: MAIN CSS -->
+		<link href="../clipone/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen" />
+		<link rel="stylesheet" href="../clipone/assets/plugins/font-awesome/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="../clipone/assets/fonts/style.css" />
+		<link rel="stylesheet" href="../clipone/assets/css/main.css" />
+		<link rel="stylesheet" href="../clipone/assets/css/main-responsive.css" />
+		<link rel="stylesheet" href="../clipone/assets/plugins/iCheck/skins/all.css" />
+		<link rel="stylesheet" href="../clipone/assets/plugins/perfect-scrollbar/src/perfect-scrollbar.css" />
+		<link rel="stylesheet" href="../clipone/assets/css/theme_light.css" id="skin_color" />
+		<!--[if IE 7]>
+		<link rel="stylesheet" href="assets/plugins/font-awesome/css/font-awesome-ie7.min.css"/>
+		<![endif]-->
+		<!-- end: MAIN CSS -->
+		
+		<!-- start: CSS REQUIRED FOR THIS PAGE ONLY -->
+		<link rel="stylesheet" href="../clipone/assets/plugins/fullcalendar/fullcalendar/fullcalendar.css" />
+		<!-- end: CSS REQUIRED FOR THIS PAGE ONLY -->
+		<link rel="shortcut icon" href="../clipone/favicon.ico" />
+	</h:head>
+	<!-- end: HEAD -->
+	
+	<!-- start: BODY -->
+	<h:body>
+		<!-- start: HEADER -->
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<!-- start: TOP NAVIGATION CONTAINER -->
+			<div class="container">
+				<div class="navbar-header">
+					<!-- start: RESPONSIVE MENU TOGGLER -->
+					<button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+						<span class="clip-list-2" />
+					</button>
+					<!-- end: RESPONSIVE MENU TOGGLER -->
+					<!-- start: LOGO -->
+					<a class="navbar-brand" href="/GPEP/pages/#{connecteBean.path}/menu.jsf"> SON<i class="clip-clip" />EDE </a>
+					<!-- end: LOGO -->
+				</div>
+
+				<div class="navbar-tools">
+					<ul class="nav navbar-right">
+						<li>
+							
+						</li>
+
+
+						<!-- start: USER DROPDOWN -->
+						<li class="dropdown current-user">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#"> 
+								<i class="clip-user-2" /> <span class="username">#{connecteBean.utilisateur1}</span> <i class="clip-chevron-down" />
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="/GPEP/pages/APPLICATION/compte.jsf"> <i class="clip-user-2" /> &nbsp;Mon profil</a></li>
+								
+								
+								<li class="divider" />
+								
+								<li><a href="GPEP/j_spring_security_logout"> <i class="clip-exit" /> &nbsp;Déconnecter</a></li>
+							</ul>
+						</li>
+						<!-- end: USER DROPDOWN -->
+					</ul>
+					<!-- end: TOP NAVIGATION MENU -->
+				</div>
+			</div>
+			<!-- end: TOP NAVIGATION CONTAINER -->
+		</div>
+		<!-- end: HEADER -->
+		
+		
+		
+		
+		<!-- start: MAIN CONTAINER -->
+		<div class="main-container">
+			<div class="navbar-content">
+				<!-- start: SIDEBAR -->
+				<div class="main-navigation navbar-collapse collapse">
+					<!-- start: MAIN MENU TOGGLER BUTTON -->
+					<div class="navigation-toggler">
+						<i class="clip-chevron-left" /> <i class="clip-chevron-right" />
+					</div>
+					<!-- end: MAIN MENU TOGGLER BUTTON -->
+					<!-- start: MAIN NAVIGATION MENU -->
+					<!-- end: MAIN NAVIGATION MENU -->
+				</div>
+				<!-- end: SIDEBAR -->
+			</div>
+			<!-- start: PAGE -->
+			<div class="main-content">
+				<div class="container">
+					<!-- start: PAGE HEADER -->
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- start: PAGE TITLE & BREADCRUMB -->
+							<ol class="breadcrumb">
+								<li><i class="clip-home-3" /> <a
+									href="/GPEP/pages/#{connecteBean.path}/menu.jsf"> Home </a></li>
+								<li class="active"><ui:insert name="page">Page</ui:insert></li>
+								<li class="search-box">
+									<form class="sidebar-search" action="">
+										<div class="form-group">
+											<input type="text" placeholder="Start Searching..." />
+											
+											<button class="submit">
+												<i class="clip-search-3" />
+											</button>
+										</div>
+									</form>
+								</li>
+							</ol>
+							<div class="page-header">
+								<h1>
+									<ui:insert name="description"> description </ui:insert>
+								</h1>
+							</div>
+							<!-- end: PAGE TITLE & BREADCRUMB -->
+						</div>
+					</div>
+					<!-- end: PAGE HEADER -->
+					<!-- start: PAGE CONTENT -->
+
+					<div class="row">
+
+						<ui:insert name="body">Content body</ui:insert>
+					</div>
+					<!-- end: PAGE CONTENT-->
+				</div>
+			</div>
+			<!-- end: PAGE -->
+		</div>
+		<!-- end: MAIN CONTAINER -->
+		<!-- start: FOOTER -->
+		<div class="footer clearfix">
+			<div class="footer-inner">2016 &copy; SONEDE.</div>
+			<div align="center">
+				<p:clock pattern="HH:mm:ss dd/MM/yyyy" />
+			</div>
+			<div class="footer-items">
+				<span class="go-top"><i class="clip-chevron-up" /></span>
+			</div>
+		</div>
+		<!-- end: FOOTER -->
+		
+		
+		
+			
+		
+		
+		
+		<!-- start: MAIN JAVASCRIPTS -->
+		<!--[if lt IE 9]>
+		<script src="clipone/assets/plugins/respond.min.js"></script>
+		<script src="clipone/assets/plugins/excanvas.min.js"></script>
+		<![endif]-->
+		<!-- <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>  -->
+		<script
+			src="../clipone/assets/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js"
+			type="" />
+		<script src="../clipone/assets/plugins/bootstrap/js/bootstrap.min.js"
+			type="" />
+		<script src="../clipone/assets/plugins/blockUI/jquery.blockUI.js"
+			type="" />
+		<script src="../clipone/assets/plugins/iCheck/jquery.icheck.min.js"
+			type="" />
+		<script
+			src="../clipone/assets/plugins/perfect-scrollbar/src/jquery.mousewheel.js"
+			type="" />
+		<script
+			src="../clipone/assets/plugins/perfect-scrollbar/src/perfect-scrollbar.js"
+			type="" />
+		<script src="../clipone/assets/js/main.js" type="" />
+		<!-- end: MAIN JAVASCRIPTS -->
+		<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+		<script src="../clipone/assets/plugins/flot/jquery.flot.js" type="" />
+		<script src="../clipone/assets/plugins/flot/jquery.flot.pie.js"
+			type="" />
+		<script src="../clipone/assets/plugins/flot/jquery.flot.resize.min.js"
+			type="" />
+		<script
+			src="../clipone/assets/plugins/jquery.sparkline/jquery.sparkline.js"
+			type="" />
+		<script
+			src="../clipone/assets/plugins/jquery-easy-pie-chart/jquery.easy-pie-chart.js"
+			type="" />
+		<script
+			src="../clipone/assets/plugins/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"
+			type="" />
+		<script
+			src="../clipone/assets/plugins/fullcalendar/fullcalendar/fullcalendar.js"
+			type="" />
+		<script src="../clipone/assets/js/index.js" type="" />
+		<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+		<script type="">
+			jQuery(document).ready(function() {
+				Main.init();
+				Index.init();
+			});
+		</script>
+	</h:body>
+</f:view>
+</html>

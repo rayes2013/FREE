@@ -1,0 +1,169 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Structures</ui:define>
+	<ui:define name="description">Liste des structures</ui:define>
+	<ui:define name="body">
+			<h:form id="growl">
+				<p:messages id="growl" autoUpdate="true" showDetail="true" sticky="false" closable="true" />
+			</h:form>
+	
+			<h:form id="AjoutButton2">
+				<p:commandButton value="Ajout" icon="ui-icon-adds" update=":ajoutForm:ajoutPanel"
+					actionListener="#{structureBean.ajoutEvent(actionEvent)}"
+					oncomplete="PF('widgetEdit').close();PF('widgetAjout').show();PF('widgetConsult').close();" />
+			</h:form>
+			<br />
+			<h:panelGrid columns="4">
+			<h:form id="liste">
+				<p:dataTable var="structure"
+					value="#{structureBean.listStructures}"
+					id="listeTab" widgetVar="Table" emptyMessage="non trouvé"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="font-size:13px;width:700px;text-align: center;margin-left: 1%;">
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Rechercher" />
+							<p:inputText id="globalFilter" onkeyup="PF('Table').filter()"
+								style="width:20%" />
+						</p:outputPanel>
+					</f:facet>
+
+					<p:column headerText="Code" id="champ2" filterBy="#{structure.code}"
+						filterMatchMode="contains"  style="width:2%" >
+						<h:outputText value="#{structure.code}" />
+					</p:column>
+					<p:column headerText="Désignation" id="champ3"
+						filterBy="#{structure.designation}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{structure.designation}"  />
+					</p:column>
+					<p:column headerText="Type" id="champ5"
+						filterBy="#{structure.type}" filterMatchMode="exact"
+					 style="width:3%" >
+					 <f:facet name="filter">
+               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+                    		<f:selectItem itemLabel="" itemValue="#{null}" />
+				            <f:selectItem itemLabel="Type 1" itemValue="#{0}" />
+				            <f:selectItem itemLabel="Type 2" itemValue="#{1}" />
+                		</h:selectOneMenu>
+            		</f:facet>
+						<h:outputText value="Type 1"  rendered="#{structure.type==0}"/>
+						<h:outputText value="Type 2" rendered="#{structure.type==1}"/>
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Select" update=":consultForm:consultPanel"
+							icon="ui-icon-newwin" oncomplete="PF('widgetConsult').show();PF('widgetAjout').close();PF('widgetEdit').close();"
+							actionListener="#{structureBean.onRowSelect(structure.id)}"
+							title="Sélectionner" />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Editer" 
+							icon="ui-icon-arrowrefresh-1-w" oncomplete="PF('widgetAjout').close();PF('widgetEdit').show();PF('widgetConsult').close();"
+							actionListener="#{structureBean.editEvent(structure.id)}"
+							title="#{msgs.modifier}" update=":formEdit:editPanel"/>
+					</p:column>
+					<p:column style="width:1%">
+					
+						<p:commandButton id="Supprimer"
+							update=":liste:listeTab" icon="ui-icon-trash"
+							action="#{structureBean.delete(structure) }"
+							title="#{msgs.supprimer}"  >
+							<p:confirm header="Confirmation" message="Etes vous sure de supprimer l'enregistrement?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="Oui" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						ajax="false" update="true" />
+					<p:commandButton value="Non" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</h:form>
+
+			<h:form id="ajoutForm">
+
+				<p:panel visible="false" header="Ajout" closable="true" widgetVar="widgetAjout" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="ajout" style="margin-left: 7%;">
+
+					<h:panelGrid id="ajoutPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Code(*)" style="color: crimson;" />
+						<h:inputText   value="#{structureBean.structure.code}" id="champ2"  />
+						<h:outputLabel for="champ3" title="designation" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText   value="#{structureBean.structure.designation}" id="champ3"  />
+						<h:outputLabel for="champ5" title="Type" value="Type" style="color: crimson;" />
+						<h:selectOneMenu id="champ5" value="#{structureBean.structure.type}" >
+				            <f:selectItem itemLabel="Type 1" itemValue="0" />
+				            <f:selectItem itemLabel="Type 2" itemValue="1" />
+				        </h:selectOneMenu>
+				        <h:outputLabel for="champ6" title="Structure mère" value="Structure mère" style="color: crimson;" />
+				        <h:selectOneMenu id="champ6"  value="#{structureBean.structure.structureParent}" converter="structureConverter">
+				            <f:selectItems value="#{structureBean.listStructuresChoix}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+				        </h:selectOneMenu>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="enregistrer"
+						update="@all"
+						actionListener="#{structureBean.insert(actionEvent) }"
+						oncomplete="PF('widgetEdit').close();PF('widgetAjout').show();PF('widgetConsult').close();" />
+				</p:panel>
+
+			</h:form>
+
+			<h:form id="formEdit">
+				<p:panel visible="false" header="Modification" widgetVar="widgetEdit" closeSpeed="0" toggleSpeed="5"
+					resizable="false" id="edit" closable="true"
+					style="margin-left: 7%;">
+					<h:panelGrid id="editPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Code" style="color: crimson;" />
+						<h:outputText value="#{structureBean.structure.code}" id="champ2"  />
+						<h:outputLabel for="champ3" title="designation" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText requiredMessage="La désignation est obligatoire" 
+							value="#{structureBean.structure.designation}"
+							id="champ3"  />
+						<h:outputLabel for="champ5" title="Type" value="Type" style="color: crimson;" />
+						<h:selectOneMenu id="champ5" value="#{structureBean.structure.type}" >
+				            <f:selectItem itemLabel="Type 1" itemValue="0" />
+				            <f:selectItem itemLabel="Type 2" itemValue="1" />
+				        </h:selectOneMenu>
+				         <h:outputLabel for="champ6" title="Structure mère" value="Structure mère" style="color: crimson;" />
+				        <h:selectOneMenu id="champ6"  value="#{structureBean.structure.structureParent}" converter="structureConverter">
+				            <f:selectItems value="#{structureBean.listStructuresChoix}" var="struc" itemLabel="#{struc.designation}" itemValue="#{struc}" />
+				        </h:selectOneMenu>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Enregistrer"
+						update="@all" oncomplete="PF('widgetEdit').show();PF('widgetAjout').close();PF('widgetConsult').close();"
+						actionListener="#{structureBean.update(actionEvent) }"/>
+				</p:panel>
+			</h:form>
+			<h:form id="consultForm" >
+				<p:panel visible="false" header="Consultation" closable="true" widgetVar="widgetConsult" resizable="false" closeSpeed="0" toggleSpeed="5"
+						id="ajout"  style="margin-left:7%;">
+	
+						<h:panelGrid id="consultPanel" columns="2" cellpadding="4" width="400px">
+							<h:outputLabel for="champ2" value="Code" style="color: crimson;" />
+							<h:outputText  value="#{structureBean.structure.code}" id="champ2"  />
+							<h:outputLabel for="champ3" title="designation" value="Désignation" style="color: crimson;" />
+							<h:outputText   value="#{structureBean.structure.designation}" id="champ3"  />
+							<h:outputLabel for="champ5" title="Type" value="Type" style="color: crimson;" />
+							<h:outputText value="Type 1"  rendered="#{structureBean.structure.type==0}"/>
+							<h:outputText value="Type 2" rendered="#{structureBean.structure.type==1}"/>
+						</h:panelGrid>
+					</p:panel>
+				</h:form>
+	 	</h:panelGrid>
+	</ui:define>
+</ui:composition>
+</html>

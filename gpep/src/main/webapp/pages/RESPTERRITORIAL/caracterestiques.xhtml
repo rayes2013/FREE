@@ -1,0 +1,219 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Caractérestiques</ui:define>
+	<ui:define name="description">Liste des caractérestiques</ui:define>
+	<ui:define name="body">
+			<h:form id="growl">
+				<p:messages id="growl" autoUpdate="true" showDetail="true" sticky="false" closable="true" />
+			</h:form>
+	
+			<h:form id="AjoutButton2">
+				<p:commandButton value="Ajout" icon="ui-icon-adds" update=":ajoutForm:ajoutPanel"
+					actionListener="#{caracterestiqueBean.ajoutEvent(actionEvent)}"
+					oncomplete="PF('widgetEdit').close();PF('widgetAjout').show();PF('widgetConsult').close();" />
+			</h:form>
+			<br />
+			<h:panelGrid columns="4">
+			<h:form id="liste">
+				<p:dataTable var="caracterestique"
+					value="#{caracterestiqueBean.listCaracterestiques}"
+					id="listeTab" widgetVar="Table" emptyMessage="non trouvé"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="font-size:13px;width:700px;text-align: center;margin-left: 1%;">
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Rechercher" />
+							<p:inputText id="globalFilter" onkeyup="PF('Table').filter()"
+								style="width:20%" />
+						</p:outputPanel>
+					</f:facet>
+
+					<p:column headerText="Code" id="champ2" filterBy="#{caracterestique.code}"
+						filterMatchMode="contains"  style="width:2%" >
+						<h:outputText value="#{caracterestique.code}" />
+					</p:column>
+					<p:column headerText="Désignation" id="champ3"
+						filterBy="#{caracterestique.designation}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{caracterestique.designation}"  />
+					</p:column>
+					<p:column headerText="Nature" id="champ4" filterBy="#{caracterestique.nature}"  style="width:2%" filterMatchMode="exact">
+					 <f:facet name="filter">
+               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+                    		<f:selectItem itemLabel="" itemValue="#{null}" />
+				            <f:selectItem itemLabel="Statique" itemValue="#{0}" />
+				            <f:selectItem itemLabel="Jouranlière" itemValue="#{1}" />
+				            <f:selectItem itemLabel="Mensuelle" itemValue="#{2}" />
+                		</h:selectOneMenu>
+            		</f:facet>
+            		<h:outputText value="Statique"  rendered="#{caracterestique.nature==0}"/>
+					<h:outputText value="Jouranlière"  rendered="#{caracterestique.nature==1}"/>
+					<h:outputText value="Mensuelle"  rendered="#{caracterestique.nature==2}"/>
+					</p:column>
+					<p:column headerText="Type" id="champ5"
+						filterBy="#{caracterestique.type}" filterMatchMode="exact"
+					 style="width:3%" >
+					 <f:facet name="filter">
+               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+                    		<f:selectItem itemLabel="" itemValue="#{null}" />
+				            <f:selectItem itemLabel="Numérique" itemValue="#{0}" />
+				            <f:selectItem itemLabel="Alpha Numérique" itemValue="#{1}" />
+                		</h:selectOneMenu>
+            		</f:facet>
+					 
+						<h:outputText value="Numérique"  rendered="#{caracterestique.type==0}"/>
+						<h:outputText value="Alpha Numérique" rendered="#{caracterestique.type==1}"/>
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Select" update=":consultForm:consultPanel,:consultForm:listeTab2"
+							icon="ui-icon-newwin" oncomplete="PF('widgetConsult').show();PF('widgetAjout').close();PF('widgetEdit').close();"
+							actionListener="#{caracterestiqueBean.onRowSelect(caracterestique.id)}"
+							title="Sélectionner" />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Editer" 
+							icon="ui-icon-arrowrefresh-1-w" oncomplete="PF('widgetAjout').close();PF('widgetEdit').show();PF('widgetConsult').close();"
+							actionListener="#{caracterestiqueBean.editEvent(caracterestique.id)}"
+							title="#{msgs.modifier}" update=":formEdit:editPanel"/>
+					</p:column>
+					<p:column style="width:1%">
+					
+						<p:commandButton id="Supprimer"
+							update=":liste:listeTab" icon="ui-icon-trash"
+							action="#{caracterestiqueBean.delete(caracterestique) }"
+							title="#{msgs.supprimer}"  >
+							<p:confirm header="Confirmation" message="Etes vous sure de supprimer l'enregistrement?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="Oui" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						ajax="false" update="true" />
+					<p:commandButton value="Non" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</h:form>
+
+			<h:form id="ajoutForm">
+
+				<p:panel visible="false" header="Ajout" closable="true" widgetVar="widgetAjout" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="ajout" style="margin-left: 7%;">
+
+					<h:panelGrid id="ajoutPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Code(*)" style="color: crimson;" />
+						<h:inputText   value="#{caracterestiqueBean.caracterestique.code}" id="champ2"  />
+						<h:outputLabel for="champ3" title="designation" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText   value="#{caracterestiqueBean.caracterestique.designation}" id="champ3"  />
+						<h:outputLabel for="champ4" title="nature" value="Nature(*)" style="color: crimson;" />
+						<h:selectOneMenu id="champ4" value="#{caracterestiqueBean.caracterestique.nature}" >
+				            <f:selectItem itemLabel="Statique" itemValue="0" />
+				            <f:selectItem itemLabel="Journalière" itemValue="1" />
+				            <f:selectItem itemLabel="Mensuelle" itemValue="2" />
+				        </h:selectOneMenu>
+						<h:outputLabel for="champ5" title="Type" value="Type(*)" style="color: crimson;" />
+						<h:selectOneMenu id="champ5" value="#{caracterestiqueBean.caracterestique.type}" >
+				            <f:selectItem itemLabel="Numérique" itemValue="0" />
+				            <f:selectItem itemLabel="Alpha Numérique" itemValue="1" />
+				        </h:selectOneMenu>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="enregistrer"
+						update="@all"
+						actionListener="#{caracterestiqueBean.insert(actionEvent) }"
+						oncomplete="PF('widgetEdit').close();PF('widgetAjout').show();PF('widgetConsult').close();" />
+				</p:panel>
+
+			</h:form>
+
+			<h:form id="formEdit">
+				<p:panel visible="false" header="Modification" widgetVar="widgetEdit" closeSpeed="0" toggleSpeed="5"
+					resizable="false" id="edit" closable="true"
+					style="margin-left: 7%;">
+					<h:panelGrid id="editPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Code" style="color: crimson;" />
+						<h:outputText value="#{caracterestiqueBean.caracterestique.code}" id="champ2"  />
+						<h:outputLabel for="champ3" title="designation" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText requiredMessage="La désignation est obligatoire" 
+							value="#{caracterestiqueBean.caracterestique.designation}"
+							id="champ3"  />
+						<h:outputLabel for="champ4" title="nature" value="Nature(*)" style="color: crimson;" />
+						<h:selectOneMenu id="champ4" value="#{caracterestiqueBean.caracterestique.nature}" >
+				            <f:selectItem itemLabel="Statique" itemValue="0" />
+				            <f:selectItem itemLabel="Journalière" itemValue="1" />
+				            <f:selectItem itemLabel="Mensuelle" itemValue="2" />
+				        </h:selectOneMenu>
+						<h:outputLabel for="champ5" title="Type" value="Type(*)" style="color: crimson;" />
+						<h:selectOneMenu id="champ5" value="#{caracterestiqueBean.caracterestique.type}" >
+				            <f:selectItem itemLabel="Numérique" itemValue="0" />
+				            <f:selectItem itemLabel="Alpha Numérique" itemValue="1" />
+				        </h:selectOneMenu>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Enregistrer"
+						update="@all" oncomplete="PF('widgetEdit').show();PF('widgetAjout').close();PF('widgetConsult').close();"
+						actionListener="#{caracterestiqueBean.update(actionEvent) }"/>
+				</p:panel>
+			</h:form>
+			<h:form id="consultForm" >
+				<p:panel visible="false" header="Consultation" closable="true" widgetVar="widgetConsult" resizable="false" closeSpeed="0" toggleSpeed="5"
+						id="ajout"  style="margin-left:7%;">
+	
+						<h:panelGrid id="consultPanel" columns="2" cellpadding="4" width="400px">
+							<h:outputLabel for="champ2" value="Code" style="color: crimson;" />
+							<h:outputText  value="#{caracterestiqueBean.caracterestique.code}" id="champ2"  />
+							<h:outputLabel for="champ3" title="designation" value="Désignation" style="color: crimson;" />
+							<h:outputText   value="#{caracterestiqueBean.caracterestique.designation}" id="champ3"  />
+							<h:outputLabel for="champ4" title="nature" value="Nature" style="color: crimson;" />
+							<h:outputText value="Statique" rendered="#{caracterestiqueBean.caracterestique.nature==0}"/>
+							<h:outputText value="Journalière"  rendered="#{caracterestiqueBean.caracterestique.nature==1}"/>
+							<h:outputText value="Mensuelle" rendered="#{caracterestiqueBean.caracterestique.nature==2}"/>
+							<h:outputLabel for="champ5" title="Type" value="Type" style="color: crimson;" />
+							<h:outputText value="Numérique"  rendered="#{caracterestiqueBean.caracterestique.type==0}"/>
+							<h:outputText value="Alpha Numérique" rendered="#{caracterestiqueBean.caracterestique.type==1}"/>
+						</h:panelGrid>
+						<br/><br/>
+						<h2>Types de Ressources affectés</h2>
+						<p:separator />
+						<p:dataTable var="typeRessource"
+					value="#{caracterestiqueBean.listTypeRessources}" 
+					id="listeTab2" widgetVar="Table2" emptyMessage=" non trouvé"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="text-align: center;">
+					<p:column headerText="Code" id="champ2" 
+						  >
+						<h:outputText value="#{typeRessource.code}" />
+					</p:column>
+					<p:column headerText="Désignation" id="champ3"
+					 >
+						<h:outputText value="#{typeRessource.designation}"  />
+					</p:column>
+					<p:column headerText="Nature" id="champ4"  >
+					<h:outputText value="Nature 1" rendered="#{typeRessource.nature==1}"/>
+					<h:outputText value="Nature 2"  rendered="#{typeRessource.nature==2}"/>
+					<h:outputText value="Nature 3" rendered="#{typeRessource.nature==3}"/>
+					</p:column>
+					<p:column headerText="Consommation produit chimique" id="champ5">
+						<h:outputText value="Oui"  rendered="#{typeRessource.consommationPC==true}"/>
+						<h:outputText value="Non" rendered="#{typeRessource.consommationPC==false}"/>
+					</p:column>
+				</p:dataTable>
+					</p:panel>
+				</h:form>
+	 	</h:panelGrid>
+	</ui:define>
+</ui:composition>
+</html>

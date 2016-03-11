@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Template Name: Clip-One - Responsive Admin Template build with Twitter Bootstrap 3 Version: 1.0 Author: ClipTheme -->
+<!--[if IE 8]><html class="ie8 no-js" lang="en"><![endif]-->
+<!--[if IE 9]><html class="ie9 no-js" lang="en"><![endif]-->
+<!--[if !IE]><!-->
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<!--<![endif]-->
+	<!-- start: HEAD -->
+	
+
+		
+	<h:head>
+		<title>GPEP</title>		
+		<link rel="stylesheet" type='text/css' href="assets/plugins/perfect-scrollbar/src/perfect-scrollbar.css"/>
+		<link rel="stylesheet" type='text/css' href="assets/css/theme_light.css" id="skin_color"/>
+		<link rel="stylesheet" type='text/css' href="assets/plugins/font-awesome/css/font-awesome.min.css"/>
+		<link rel="stylesheet" type='text/css' href="assets/fonts/style.css"/>
+		<link rel="stylesheet" type='text/css' href="assets/css/main.css"/>
+		<link rel="stylesheet" type='text/css' href="assets/css/main-responsive.css"/>
+		<link rel="stylesheet" type='text/css' href="assets/plugins/iCheck/skins/all.css"/>
+		<link href="assets/plugins/bootstrap/css/bootstrap.min.css" type='text/css' rel="stylesheet" media="screen"/>
+		
+		
+	</h:head>
+	<!-- end: HEAD -->
+	<!-- start: BODY -->
+	<h:body class="login example2">
+		
+		<div class="main-login col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+			<div class="logo">SON<i class="clip-clip"></i>EDE
+			</div>
+			<!-- start: LOGIN BOX -->
+			<div class="box-login">
+				<h3>#{msgs.connecter}</h3>
+				
+				<form class="form-login"  method="post" action="/GPEP/j_spring_security_check">
+					
+					<fieldset>
+						<div class="form-group">
+							<span class="input-icon">
+								<input type="text" class="form-control" name="j_username" placeholder="#{msgs.login}" />
+								<i class="icon-user"></i> </span>
+							<!-- To mark the incorrectly filled input, you must add the class "error" to the input -->
+							<!-- example: <input type="text" class="login error" name="login" value="Username" /> -->
+						</div>
+						<div class="form-group form-actions">
+							<span class="input-icon">
+								<input type="password" class="form-control password" name="j_password" placeholder="#{msgs.mdp}" />
+								<i class="icon-lock"></i>
+								 </span>
+						</div>
+						<div class="form-actions">
+							<label for="remember" class="checkbox-inline">
+								<input type="checkbox" class="grey remember" id="remember" name="GPEP/_spring_security_remember_me"/>
+								#{msgs.resterconnecter}
+							</label>
+							<button type="submit" class="btn btn-bricky pull-right">
+								#{msgs.entrer} <i class="icon-circle-arrow-right"></i>
+							</button>
+						</div>
+						
+					</fieldset>
+				</form>
+			</div>
+			<!-- end: LOGIN BOX -->
+			
+			<!-- start: COPYRIGHT -->
+			<div class="copyright">
+				2016 &copy; SONEDE.
+			</div>
+			<!-- end: COPYRIGHT -->
+		</div>
+		
+		<table>
+			<tr><th>LOGIN</th><th>MOT DE PASSE</th></tr>
+			<tr><td>admin</td><td>admin</td></tr>
+			<tr><td>agent</td><td>agent</td></tr>
+			<tr><td>central</td><td>central</td></tr>
+			<tr><td>terri</td><td>terri</td></tr>
+		</table>
+	</h:body>
+	<!-- end: BODY -->
+
+</html>

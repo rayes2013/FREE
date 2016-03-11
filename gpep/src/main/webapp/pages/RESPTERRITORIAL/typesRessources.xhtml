@@ -1,0 +1,416 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Type des Ressources</ui:define>
+	<ui:define name="description">Liste des types des Ressources</ui:define>
+	<ui:define name="body">
+			<h:form id="growl">
+				<p:messages id="growl" autoUpdate="true" showDetail="true" sticky="false" closable="true" />
+			</h:form>
+			<h:form id="AjoutButton">
+				<p:commandButton value="Ajout" icon="ui-icon-adds"
+					actionListener="#{typeRessourceBean.ajoutEvent(actionEvent)}"
+					update=":ajoutForm:ajoutPanel,tabview" oncomplete="PF('widgetAjout').show();PF('widgetEdit').close();PF('widgetConsult').close();"  />
+			</h:form>
+			<br />
+			<h:panelGrid columns="4" >
+			<h:form id="liste" >
+				<p:dataTable var="typeRessource"
+					value="#{typeRessourceBean.listTypeRessources}" 
+					id="listeTab" widgetVar="Table" emptyMessage=" non trouvé"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="width:800px;text-align: center;margin-left: 1%;">
+					<f:facet name="header" >
+						<p:outputPanel>
+							<h:outputText value="Rechercher" />
+							<p:inputText id="globalFilter" onkeyup="PF('Table').filter()" style="width:20%" />
+						</p:outputPanel>
+					</f:facet>
+					<p:column headerText="Code" id="champ2" filterBy="#{typeRessource.code}"
+						filterMatchMode="contains"  style="width:2%" >
+						<h:outputText value="#{typeRessource.code}" />
+					</p:column>
+					<p:column headerText="Désignation" id="champ3"
+						filterBy="#{typeRessource.designation}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{typeRessource.designation}"  />
+					</p:column>
+					<p:column headerText="Nature" id="champ4" filterBy="#{typeRessource.nature}" filterMatchMode="exact" style="width:2%" >
+					 <f:facet name="filter">
+               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+                    		<f:selectItem itemLabel="" itemValue="#{null}" />
+				            <f:selectItem itemLabel="Nature 1" itemValue="#{1}" />
+				            <f:selectItem itemLabel="Nature 2" itemValue="#{2}" />
+				            <f:selectItem itemLabel="Nature 3" itemValue="#{3}" />
+                		</h:selectOneMenu>
+            		</f:facet>
+					<h:outputText value="Nature 1" rendered="#{typeRessource.nature==1}"/>
+					<h:outputText value="Nature 2"  rendered="#{typeRessource.nature==2}"/>
+					<h:outputText value="Nature 3" rendered="#{typeRessource.nature==3}"/>
+					</p:column>
+					<p:column headerText="Consommation produit chimique" id="champ5"
+						filterBy="#{typeRessource.consommationPC}" filterMatchMode="exact"
+					 style="width:3%;" >
+						 <f:facet name="filter">
+	               			 <h:selectOneMenu onchange="PF('Table').filter()" >
+	               			 <f:selectItem itemLabel="" itemValue="#{null}" />
+					            <f:selectItem itemLabel="Oui" itemValue="#{true}" />
+					            <f:selectItem itemLabel="Non" itemValue="#{false}" />
+	                		</h:selectOneMenu>
+	            		</f:facet>
+						<h:outputText value="Oui"  rendered="#{typeRessource.consommationPC==true}"/>
+						<h:outputText value="Non" rendered="#{typeRessource.consommationPC==false}"/>
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Select" update="@all" 
+							icon="ui-icon-newwin"  oncomplete="PF('widgetConsult').show();PF('widgetAjout').close();PF('widgetEdit').close();PF('widgetAjout2').close();PF('widgetAjout3').close();PF('widgetEdit3').close();"
+							actionListener="#{typeRessourceBean.onRowSelect(typeRessource.id)}"
+							title="Sélectionner" />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Editer" update=":formEdit:editPanel,:tabview"
+							icon="ui-icon-arrowrefresh-1-w" oncomplete="PF('widgetAjout').close();PF('widgetConsult').close();PF('widgetEdit').show();"
+							actionListener="#{typeRessourceBean.editEvent(typeRessource.id)}"
+							title="#{msgs.modifier}" />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Supprimer"
+							update=":liste:listeTab" icon="ui-icon-trash"
+							action="#{typeRessourceBean.delete(typeRessource) }"
+							title="#{msgs.supprimer}"   oncomplete="PF('widgetAjout').close();PF('widgetConsult').close();PF('widgetEdit').close;">
+							<p:confirm header="Confirmation" message="Etes vous sure de supprimer l'enregistrement?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="Oui" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						ajax="false" update="true" />
+					<p:commandButton value="Non" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</h:form>
+
+			<h:form id="ajoutForm" >
+
+				<p:panel visible="false" header="Ajout" closable="true" widgetVar="widgetAjout" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="ajout" style="margin-left:7%;">
+
+					<h:panelGrid id="ajoutPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Code(*)" style="color: crimson;" />
+						<h:inputText  value="#{typeRessourceBean.typeRessource.code}" id="champ2"  />
+						<h:outputLabel for="champ3" title="designation" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText   value="#{typeRessourceBean.typeRessource.designation}" id="champ3"  />
+						<h:outputLabel for="champ4" title="nature" value="Nature" style="color: crimson;" />
+						<h:selectOneMenu id="champ4" value="#{typeRessourceBean.typeRessource.nature}" >
+				            <f:selectItem itemLabel="Nature 1" itemValue="#{1}" />
+				            <f:selectItem itemLabel="Nature 2" itemValue="#{2}" />
+				            <f:selectItem itemLabel="Nature 3" itemValue="#{3}" />
+				        </h:selectOneMenu>
+						<h:outputLabel for="champ5" title="Consommation Produit Chimique" value="Consommation Produit Chimique" style="color: crimson;" />
+						<p:selectBooleanCheckbox value="#{typeRessourceBean.typeRessource.consommationPC}" />
+					</h:panelGrid>
+					<p:separator />
+					<h:commandButton value="enregistrer"
+						update="@all"
+						actionListener="#{typeRessourceBean.insert(actionEvent) }"
+						 oncomplete="PF('widgetAjout').show();PF('widgetEdit').close();PF('widgetConsult').close();"  />
+				</p:panel>
+
+			</h:form>
+
+			<h:form id="formEdit" >
+
+				<p:panel visible="false" header="Modification" widgetVar="widgetEdit" closeSpeed="0" toggleSpeed="5"
+					resizable="false" id="edit" closable="true" style="margin-left:7%;">
+					<h:panelGrid id="editPanel" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Code" style="color: crimson;" />
+						<h:outputText value="#{typeRessourceBean.typeRessource.code}" id="champ2"  />
+						<h:outputLabel for="champ3" title="designation" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText  value="#{typeRessourceBean.typeRessource.designation}" id="champ3"  />
+						<h:outputLabel for="champ4" title="nature" value="Nature" style="color: crimson;" />
+						<h:selectOneMenu id="champ4" value="#{typeRessourceBean.typeRessource.nature}" >
+				            <f:selectItem itemLabel="Nature 1" itemValue="1" />
+				            <f:selectItem itemLabel="Nature 2" itemValue="2" />
+				            <f:selectItem itemLabel="Nature 3" itemValue="3" />
+				        </h:selectOneMenu>
+						<h:outputLabel for="champ5" title="Consommation Produit Chimique" value="Consommation Produit Chimique" style="color: crimson;" />
+						<p:selectBooleanCheckbox value="#{typeRessourceBean.typeRessource.consommationPC}" />
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Enregistrer"
+						update="@all"
+						actionListener="#{typeRessourceBean.update(actionEvent) }"
+						oncomplete="PF('widgetAjout').close();PF('widgetConsult').close();PF('widgetEdit').show();"/>
+				</p:panel>
+
+			</h:form>
+			
+			<h:form id="consultForm" >
+				<p:panel visible="false" header="Consultation" closable="true" widgetVar="widgetConsult" resizable="false" closeSpeed="0" toggleSpeed="5"
+						id="ajout"  style="margin-left:7%;">
+	
+						<h:panelGrid id="consultPanel" columns="2" cellpadding="4" width="400px">
+							<h:outputLabel for="champ2" value="Code" style="color: crimson;" />
+							<h:outputText  value="#{typeRessourceBean.typeRessource.code}" id="champ2"  />
+							<h:outputLabel for="champ3" title="designation" value="Désignation" style="color: crimson;" />
+							<h:outputText   value="#{typeRessourceBean.typeRessource.designation}" id="champ3"  />
+							<h:outputLabel for="champ4" title="nature" value="Nature" style="color: crimson;" />
+							<h:outputText value="Nature 1" rendered="#{typeRessourceBean.typeRessource.nature==1}"/>
+							<h:outputText value="Nature 2"  rendered="#{typeRessourceBean.typeRessource.nature==2}"/>
+							<h:outputText value="Nature 3" rendered="#{typeRessourceBean.typeRessource.nature==3}"/>
+							<h:outputLabel for="champ5" title="Consommation Produit Chimique" value="Consommation Produit Chimique" style="color: crimson;" />
+							<h:outputText value="Oui"  rendered="#{typeRessourceBean.typeRessource.consommationPC==true}"/>
+							<h:outputText value="Non" rendered="#{typeRessourceBean.typeRessource.consommationPC==false}"/>
+						</h:panelGrid>
+					</p:panel>
+				</h:form>
+		</h:panelGrid>
+		<br/>
+		<h3>Caractérestiques et formule</h3>
+	    <p:tabView id="tabview"    >
+	    	<p:tab title="Caractérestiques" >
+	   			 
+	        <h:form id="AjoutButton2">
+				<p:commandButton value="Ajout" icon="ui-icon-adds" update=":tabview:ajoutForm2:ajoutPanel2"
+					actionListener="#{typeRessourceBean.ajoutCaracterestiqueEvent(actionEvent)}"
+					oncomplete="PF('widgetAjout2').show();" />
+			</h:form>
+			<br />
+			<h:panelGrid columns="3">
+			<h:form id="liste2">
+				<p:dataTable var="caracterestique"
+					value="#{typeRessourceBean.listCaracterestiques}"
+					id="listeTab2" widgetVar="Table2" emptyMessage="non trouvé"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="width:700px;text-align: center;margin-left: 1%;">
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Rechercher" />
+							<p:inputText id="globalFilter" onkeyup="PF('Table2').filter()"
+								style="width:20%" />
+						</p:outputPanel>
+					</f:facet>
+
+					<p:column headerText="Code" id="champ2" filterBy="#{caracterestique.code}"
+						filterMatchMode="contains"  style="width:2%" >
+						<h:outputText value="#{caracterestique.code}" />
+					</p:column>
+					<p:column headerText="Désignation" id="champ3"
+						filterBy="#{caracterestique.designation}" filterMatchMode="contains"
+					 style="width:2%" >
+						<h:outputText value="#{caracterestique.designation}"  />
+					</p:column>
+					<p:column headerText="Nature" id="champ4" filterBy="#{caracterestique.nature}"  style="width:2%" filterMatchMode="exact">
+					 <f:facet name="filter">
+               			 <h:selectOneMenu onchange="PF('Table2').filter()" >
+                    		<f:selectItem itemLabel="" itemValue="#{null}" />
+				            <f:selectItem itemLabel="Statique" itemValue="#{0}" />
+				            <f:selectItem itemLabel="Jouranlière" itemValue="#{1}" />
+				            <f:selectItem itemLabel="Mensuelle" itemValue="#{2}" />
+                		</h:selectOneMenu>
+            		</f:facet>
+            		<h:outputText value="Statique"  rendered="#{caracterestique.nature==0}"/>
+					<h:outputText value="Jouranlière"  rendered="#{caracterestique.nature==1}"/>
+					<h:outputText value="Mensuelle"  rendered="#{caracterestique.nature==2}"/>
+					</p:column>
+					<p:column headerText="Type" id="champ5"
+						filterBy="#{caracterestique.type}" filterMatchMode="exact"
+					 style="width:3%" >
+					 <f:facet name="filter">
+               			 <h:selectOneMenu onchange="PF('Table2').filter()" >
+                    		<f:selectItem itemLabel="" itemValue="#{null}" />
+				            <f:selectItem itemLabel="Numérique" itemValue="#{0}" />
+				            <f:selectItem itemLabel="Alpha Numérique" itemValue="#{1}" />
+                		</h:selectOneMenu>
+            		</f:facet>
+						<h:outputText value="Numérique"  rendered="#{caracterestique.type==0}"/>
+						<h:outputText value="Alpha Numérique" rendered="#{caracterestique.type==1}"/>
+					</p:column>
+
+					<p:column style="width:1%">
+						<p:commandButton id="Supprimer"
+							update="@all" icon="ui-icon-trash"
+							action="#{typeRessourceBean.deleteCaracterestique(caracterestique) }"
+							title="#{msgs.supprimer}"  >
+							<p:confirm header="Confirmation" message="Etes vous sure de supprimer l'enregistrement?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="Oui" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						ajax="false" update="true" />
+					<p:commandButton value="Non" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</h:form>
+
+			<h:form id="ajoutForm2">
+				<p:panel visible="false" header="Ajout" closable="true" widgetVar="widgetAjout2" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="ajout" style="margin-left: 7%;">
+
+					<h:panelGrid id="ajoutPanel2" columns="2" cellpadding="4" width="500px">
+						<h:outputLabel for="champ2" value="Caractérestique(*)" style="color: crimson;" />
+						<h:selectOneMenu id="champ2"  value="#{typeRessourceBean.caracterestique}" converter="caracterestiqueConverter">
+				            <f:selectItems value="#{typeRessourceBean.listCaracterestiquesASelectionner}" var="car" itemLabel="#{car.code} #{car.designation}" itemValue="#{car}" />
+				        </h:selectOneMenu>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="enregistrer"
+						update="@all"
+						actionListener="#{typeRessourceBean.insertCaracterestique(actionEvent) }"
+						oncomplete="PF('widgetAjout2').show();" />
+				</p:panel>
+
+			</h:form>
+
+	        </h:panelGrid>
+	        </p:tab>
+	        <p:tab title="Formules">
+	        	<h:form id="AjoutButton3">
+				<p:commandButton value="Ajout" icon="ui-icon-adds"
+					actionListener="#{typeRessourceBean.ajoutFormuleEvent(actionEvent)}"
+					update=":tabview:ajoutForm3:ajoutPanel3" oncomplete="PF('widgetAjout3').show();PF('widgetEdit3').close();"  />
+				</h:form>
+				<br />
+				<h:panelGrid columns="3">
+	        	<h:form id="liste3" >
+				<p:dataTable var="formule"
+					value="#{typeRessourceBean.listFormules}" 
+					id="listeTab3" widgetVar="Table3" emptyMessage=" non trouvé"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					style="width:800px;text-align: center;margin-left: 1%;">
+					<f:facet name="header" >
+						<p:outputPanel>
+							<h:outputText value="Rechercher" />
+							<p:inputText id="globalFilter" onkeyup="PF('Table3').filter()" style="width:20%" />
+						</p:outputPanel>
+					</f:facet>
+					<p:column headerText="Code" id="champ2" filterBy="#{formule.code}"
+						filterMatchMode="contains"  style="width:3%" >
+						<h:outputText value="#{formule.code}" />
+					</p:column>
+					<p:column headerText="Désignation" id="champ3"
+						filterBy="#{formule.designation}" filterMatchMode="contains"
+					 style="width:3%" >
+						<h:outputText value="#{formule.designation}"  />
+					</p:column>
+					<p:column headerText="Type du rapport" id="champ4" filterBy="#{formule.type}" filterMatchMode="exact" style="width:3%" >
+					 <f:facet name="filter">
+               			 <h:selectOneMenu onchange="PF('Table3').filter()" >
+                    		<f:selectItem itemLabel="" itemValue="#{null}" />
+				            <f:selectItem itemLabel="Journalière" itemValue="#{1}" />
+				            <f:selectItem itemLabel="Mensuelle" itemValue="#{2}" />
+                		</h:selectOneMenu>
+            		</f:facet>
+					<h:outputText value="Journalière" rendered="#{formule.type==1}"/>
+					<h:outputText value="Mensuelle"  rendered="#{formule.type==2}"/>
+					</p:column>
+					<p:column headerText="Expression" id="champ5"
+						filterBy="#{formule.expression}" filterMatchMode="contains"
+					 style="width:3%;" >
+					 	<h:outputText value="#{formule.expression}"  />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Editer" update=":tabview:formEdit3:editPanel3"
+							icon="ui-icon-arrowrefresh-1-w" oncomplete="PF('widgetAjout3').close();PF('widgetEdit3').show();"
+							actionListener="#{typeRessourceBean.editFormuleEvent(formule.id)}"
+							title="#{msgs.modifier}" />
+					</p:column>
+					<p:column style="width:1%">
+						<p:commandButton id="Supprimer"
+							update=":tabview:liste3:listeTab3" icon="ui-icon-trash"
+							action="#{typeRessourceBean.deleteFormule(formule) }"
+							title="#{msgs.supprimer}"   oncomplete="PF('widgetAjout3').close();PF('widgetEdit3').close;">
+							<p:confirm header="Confirmation" message="Etes vous sure de supprimer l'enregistrement?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="Oui" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						ajax="false" update="true" />
+					<p:commandButton value="Non" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</h:form>
+	            <h:form id="ajoutForm3">
+	            	<p:panel visible="false" header="Ajout" closable="true" widgetVar="widgetAjout3" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="ajout" style="margin-left:7%;">
+					<h:panelGrid  id="ajoutPanel3" columns="2" cellpadding="4"  width="600px">
+						<h:outputLabel for="champ2" value="Code(*)" style="color: crimson;" />
+						<h:inputText   value="#{typeRessourceBean.formule.code}" id="champ2"  />
+						<h:outputLabel for="champ3" title="designation" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText  value="#{typeRessourceBean.formule.designation}" id="champ3"  />
+						<h:outputLabel for="champ4" title="type" value="Type du rapport(*)" style="color: crimson;" />
+						<h:selectOneMenu id="champ4" value="#{typeRessourceBean.formule.type}" >
+				            <f:selectItem itemLabel="Journalière" itemValue="1" />
+				            <f:selectItem itemLabel="Mensuelle" itemValue="2" />
+				        </h:selectOneMenu>
+				       	<h:outputLabel  rendered="#{typeRessourceBean.listCaracterestiques.size()!=0}"  value="Variables numériques" style="color: crimson;" />
+				        <ui:repeat  rendered="#{typeRessourceBean.listCaracterestiques.size()!=0}"  var="row" value="#{typeRessourceBean.listCaracterestiques}">
+                			<p:commandButton ajax="true" update=":tabview:ajoutForm3:ajoutPanel3"  value="#{row.designation}" actionListener="#{typeRessourceBean.ajouterCarFormule(row.designation)}"  rendered="#{row.type==0}"  />
+						</ui:repeat>
+						<h:outputLabel for="champ5" title="Expression" value="Expression Mathématique" style="color: crimson;" />
+						<p:inputTextarea rows="6" cols="33" autoResize="false" value="#{typeRessourceBean.formule.expression}" id="champ5"/>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Vérifier la formule" update="growl"
+						actionListener="#{typeRessourceBean.verifFormule(actionEvent) }" ajax="true" />
+					<p:commandButton value="Enregistrer" update="growl,:tabview:liste3:listeTab3,:tabview:ajoutForm3:ajoutPanel3"
+						actionListener="#{typeRessourceBean.insertFormule(actionEvent)}" ajax="true" />
+					</p:panel>
+				</h:form>
+				<h:form id="formEdit3">
+					<p:panel visible="false" header="Modification" closable="true" widgetVar="widgetEdit3" resizable="false" closeSpeed="0" toggleSpeed="5"
+					id="ajout" style="margin-left:7%;">
+					<h:panelGrid  id="editPanel3" columns="2" cellpadding="4"  width="600px">
+						<h:outputLabel for="champ2" value="Code(*)" style="color: crimson;" />
+						<h:outputText   value="#{typeRessourceBean.formule.code}" id="champ2"  />
+						<h:outputLabel for="champ3" title="designation" value="Désignation(*)" style="color: crimson;" />
+						<h:inputText  value="#{typeRessourceBean.formule.designation}" id="champ3"  />
+						<h:outputLabel for="champ4" title="type" value="Type du rapport(*)" style="color: crimson;" />
+						<h:selectOneMenu id="champ4" value="#{typeRessourceBean.formule.type}" >
+				            <f:selectItem itemLabel="Journalière" itemValue="1" />
+				            <f:selectItem itemLabel="Mensuelle" itemValue="2" />
+				        </h:selectOneMenu>
+				       	<h:outputLabel  rendered="#{typeRessourceBean.listCaracterestiques.size()!=0}"  value="Variables numériques" style="color: crimson;" />
+				        <ui:repeat  rendered="#{typeRessourceBean.listCaracterestiques.size()!=0}"  var="row" value="#{typeRessourceBean.listCaracterestiques}">
+                			<p:commandButton ajax="true" update=":tabview:formEdit3:editPanel3"  value="#{row.designation}" actionListener="#{typeRessourceBean.ajouterCarFormule(row.designation)}"  rendered="#{row.type==0}"  />
+						</ui:repeat>
+						<h:outputLabel for="champ5" title="Expression" value="Expression Mathématique" style="color: crimson;" />
+						<p:inputTextarea rows="6" cols="33" autoResize="false" value="#{typeRessourceBean.formule.expression}" id="champ5"/>
+					</h:panelGrid>
+					<p:separator />
+					<p:commandButton value="Vérifier la formule" update="growl"
+						actionListener="#{typeRessourceBean.verifFormule(actionEvent) }" ajax="true" />
+					<p:commandButton value="Enregistrer" update="growl,:tabview:liste3:listeTab3,:tabview:formEdit3:editPanel3"
+						actionListener="#{typeRessourceBean.updateFormule(actionEvent)}" ajax="true" />
+					</p:panel>
+				</h:form>
+				
+				</h:panelGrid>
+	        </p:tab>
+	    </p:tabView>
+	</ui:define>
+</ui:composition>
+</html>

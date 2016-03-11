@@ -1,0 +1,69 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">GPAO</ui:define>
+	<ui:define name="page">Acceuil</ui:define>
+	<ui:define name="description">Logiciel de Gestion de Production Assisté par Ordinateur</ui:define>
+	<ui:define name="body">
+			<div class="row">
+						<div class="col-sm-4">
+							<div class="core-box">
+								<div class="heading">
+									<i class="clip-user-4 circle-icon circle-green"></i>
+									<h2>Gérer les ressources humaines</h2>
+								</div>
+								<div class="content">
+									Ce module permet de gérer les employés, les catégories et les départements de l'entreprise.
+								</div>
+								<a class="view-more" href="/SpSecurity/pages/RH/personnel.jsf">
+									Voir plus <i class="clip-arrow-right-2"></i>
+								</a>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="core-box">
+								<div class="heading">
+									<i class="clip-clip circle-icon circle-teal"></i>
+									<h2>Gérer les articles</h2>
+								</div>
+								<div class="content">
+									Ce module permet de gérer les articles, en plus de tous les paramètres associés à l'article .
+								</div>
+								<a class="view-more" href="/SpSecurity/pages/ARTICLE/article.jsf">
+									Voir plus <i class="clip-arrow-right-2"></i>
+								</a>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="core-box">
+								<div class="heading">
+									<i class="clip-database circle-icon circle-bricky"></i>
+									<h2>Gérer les ordres</h2>
+								</div>
+								<div class="content">
+									Ce module permet de gérer les ordres de fabrication .
+								</div>
+								<a class="view-more" href="/SpSecurity/pages/ORDRE/ordre.jsf">
+									Voir plus <i class="clip-arrow-right-2"></i>
+								</a>
+							</div>
+						</div>
+						</div>
+						
+			
+			<p:panelGrid columns="1">	
+				<p:galleria  value="#{applicationBean.images}"  effectSpeed="1000"  var="image" panelWidth="1000" panelHeight="300" showCaption="true">  
+    				<p:graphicImage  value="../clipone/assets/images/#{image}" width="100%" height="100%"  alt="#{image}" title="#{image}"/>  
+				</p:galleria>  
+			</p:panelGrid>
+    		
+
+		
+	</ui:define>
+
+</ui:composition>
+</html>

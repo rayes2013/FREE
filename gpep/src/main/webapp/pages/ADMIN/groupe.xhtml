@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="../clipone/template.xhtml">
+	<ui:define name="title">Gestion</ui:define>
+	<ui:define name="page">Groupes</ui:define>
+	<ui:define name="description">Liste des groupes</ui:define>
+	<ui:define name="body">
+			<h:form id="growl">
+				<p:messages id="growl" autoUpdate="true" showDetail="true" sticky="false" closable="true" />
+			</h:form>
+	
+			<br /><br /><br />
+			<h:panelGrid columns="4">
+			<h:form id="liste">
+				<p:dataTable var="groupe"
+					value="#{groupeBean.listGroupes}"
+					id="listeTab" widgetVar="Table" emptyMessage="non trouvé"
+					style="font-size:13px;width:400px;text-align: center;margin-left: 8%;">
+					<p:column headerText="Libellé" id="champ3" style="width:2%" >
+						<h:outputText value="#{groupe.libelle}"  />
+					</p:column>
+				</p:dataTable>
+				
+			</h:form>
+	 	</h:panelGrid>
+	</ui:define>
+</ui:composition>
+</html>
