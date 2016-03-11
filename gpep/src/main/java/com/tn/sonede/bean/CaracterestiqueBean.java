@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -14,18 +15,15 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.tn.sonede.persistance.Caracterestique;
+import com.tn.sonede.persistance.Ressource;
 import com.tn.sonede.persistance.TypeRessource;
 import com.tn.sonede.service.CaracterestiqueService;
 
 
-@ManagedBean(name = "caracterestiqueBean")
+@ManagedBean(name = "caracterestiqueBean1")
 @SessionScoped
 public class CaracterestiqueBean implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	@ManagedProperty(value = "#{caracterestiqueService}")
 	private CaracterestiqueService caracterestiqueService;
 	private Caracterestique caracterestique;
